@@ -11,11 +11,11 @@ NOTE TO SELF
 
 Author: DigitalSorceress
 Date: 2026/02/28
-Version: v10.0.0.000
+Version: v10.0.0.001
 ]]
 
 -- Some initialization of our happy local vars
-local myVersion = "v10.0.0.000"
+local myVersion = "v10.0.0.001"
 
 local totalBagSlots = 0
 local totalFreeBagSlots = 0
@@ -1348,7 +1348,7 @@ function MultiTool:autoSellJunk()
              _,_,currentItemQuality,_,_,_,_,_,_,_ = GetItemInfo(currentItem)
              self:debugMsg("     currentItemQuality: "..tostring(currentItemQuality), "blather")
             if (currentItemQuality ~= nil and currentItemQuality == 0) then
-              UseContainerItem(bag,slot)
+              C_Container.UseContainerItem(bag,slot)
             end
           end
         end
