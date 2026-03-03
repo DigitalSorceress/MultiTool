@@ -1,10 +1,13 @@
-MultiTool:ReadMe          v9.0.5.001        2021/03/12          DigitalSorceress
+# MultiTool:ReadMe
+- Version: v10.0.000
+- Date: 2026/03/03
+- Author: DigitalSorceress
 
-SUMMARY
-MultiTool: A set of tools to help make Multi Boxers lives a bit easier.
+##SUMMARY
+MultiTool: A set of quality of life tools to help make folks who quest together's lives a bit easier.
 
 
-HISTORY / INSPIRATION
+## HISTORY / INSPIRATION
 This addon was originally created to assit me with multiboxing (using 2 or 3 accounts at once) WotLK phasing made multi-boxing harder and harder as it constantly broke follow etc. I stopped multi-boxing but found that this addon was still very useful for folks questing together and for the few little quality of life enhancements like auto sell gray and auto reject duel etc, so I kept it going
 
 As someone who used to dual / triple box all the time, I have found a lot of little bits and pieces in the addon world that help take some of the drudgery out of multiple invites, turnins, quest gossips, yada yada. Often times, I find I am installing a whole addon just for one small feature, leading to a lot of overhead. I decided that Enough is enough.
@@ -14,7 +17,7 @@ This addon was inspired by Smurfy's MultiBox v2 which has a great collection of 
 I'd also like to acknowledge "Zanthor's Quest Broadcaster" for giving me a road map for quest gossip cloning.
 
 
-ABOUT 'MASTERLESS' TOOLS
+## ABOUT 'MASTERLESS' TOOLS
 A lot of the available addons for multi boxers seem to use the concept of a "master".. Makes sense I suppose, after, all, you tend to play one toon (master) and have all the others (slaves) follow you and do stuff when your master does.
 
 This is all well and good, but I often find that when not in combat, (quest pickup/turnin, flight masters, etc...) I may want to be taking lead on a different toon. (cuz I happen to be on that mouse/kbd for some reason).
@@ -24,7 +27,7 @@ So, I designed a system for flightmasters and quest givers where all you do is o
 NOTE: I deliberately do NOT clone quest reward choices on the grounds that I run three different classes and want to pick that myself. I may put in an option for "total clone" where that is allowed, but for now, you gotta pick your rewards manually.
 
 
-FEATURE ROAD MAP
+## FEATURE ROAD MAP
 I've got a LOT of little things I'd like to do with this addon over time. Some of these may be impractical or not really end up being what I wanted. They are listed here somewhat in the order I want to build them in.
 
 * Warn on losing AutoFollow - Implemented v0.3.05
@@ -110,13 +113,12 @@ I've got a LOT of little things I'd like to do with this addon over time. Some o
 * Group Hearth - Not Started
   Command to cause all in your group with MultiTool (in whitelist when I finally build that) to hearth
 
-NOTES
+## NOTES
 There are probably many things I can't think of at the moment, but this is a good wish-list.
 
 If I can figure out a way to do it, I may set this up as individual modules so that one can quickly enable/disable parts they want or don't want to save performance and to try and isolate the parts from each other as much as possible
 
-
-
+```
 ---------------------------------------------------
 |  TAXI DISPATCH...                               |
 |      current setting: Shadowprey Village        |
@@ -126,3 +128,4 @@ If I can figure out a way to do it, I may set this up as individual modules so t
 |  | X |   Uncheck this box to cancel your taxi   |
 |   ---                                           |
 ---------------------------------------------------
+```
