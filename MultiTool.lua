@@ -10,12 +10,12 @@ NOTE TO SELF
 /console scriptErrors 1
 
 Author: DigitalSorceress
-Date: 2026/02/28
-Version: v10.0.0.001
+Date: 2026/03/03
+Version: v10.0.0.002
 ]]
 
 -- Some initialization of our happy local vars
-local myVersion = "v10.0.0.001"
+local myVersion = "v10.0.0.002"
 
 local totalBagSlots = 0
 local totalFreeBagSlots = 0
