@@ -10,12 +10,16 @@ NOTE TO SELF
 /console scriptErrors 1
 
 Author: DigitalSorceress
-Date: 2026/03/03
-Version: v10.0.0.002
+Date: 2026/03/04
+Version: v10.0.0.003
 ]]
 
 -- Some initialization of our happy local vars
-local myVersion = "v10.0.0.002"
+local myVersion = "v10.0.0.003"
+
+local cat = "empty"
+local foo = "empty"
+
 
 local totalBagSlots = 0
 local totalFreeBagSlots = 0
@@ -828,12 +832,22 @@ function MultiTool:ChatCommand(input)
     -- InterfaceOptionsFrame_OpenToCategory(self.optionsFrame)
     -- finally got annoyed that the chat command would not open to my options anymore
     -- found out it's a known bug in bliz code, but you can work around by calling twice
+    -- This is VERY OUTDATED and does not work
     -- InterfaceOptionsFrame_OpenToCategory(self.optionsFrame)
-    --InterfaceAddOnsList_Update()
-    Settings.OpenToCategory(self.options) 
-    -- InterfaceOptionsFrame_OpenToCategory("MultiTool")
+	-- this can work but not recommended
+	--SettingsPanel:Open();
+	
+	-- I got the frame ID from the AddToBlizOptions second return below
+	self:debugMsg("OptionsFrameId: ".. self.OptionsFrameId, "debug")
+	-- as of 12.1 this is the proper way to open to my addon's main
+	-- If I want to open to a subframe I need to get the ID
+	C_SettingsUtil.OpenSettingsPanel(self.OptionsFrameId)
+
   else
-    LibStub("AceConfigCmd-3.0").HandleCommand(MultiTool, L["SHORT_SLASH_CMD"], L["FULL_SLASH_CMD"], input)
+  	-- this was a test and it did not work
+  	--C_CombatAudioAlert.SpeakText("MultiTool", 0, true)
+  	self:debugMsg("MultiTool: chat command: ".. input, "debug")
+    LibStub("AceConfigCmd-3.0").HandleCommand(MultiTool, L["SHORT_SLASH_CMD"], "MultiTool", input)
   end
 end
 
@@ -844,10 +858,12 @@ end
 -- Called when the addon is loaded
 function MultiTool:OnInitialize()
   -- Using the AceDB for storage of our info
+  
   self.db = LibStub("AceDB-3.0"):New("MultiToolDB", defaults, "Default")
 
   -- main options table stuff
-  LibStub("AceConfig-3.0"):RegisterOptionsTable("Main Options", options)
+  --LibStub("AceConfig-3.0"):RegisterOptionsTable("Main Options", options)
+  LibStub("AceConfig-3.0"):RegisterOptionsTable("MultiTool", options) 
   LibStub("AceConfig-3.0"):RegisterOptionsTable("Debug Options", debugOptions)
   LibStub("AceConfig-3.0"):RegisterOptionsTable("Party Options", partyOptions)
   LibStub("AceConfig-3.0"):RegisterOptionsTable("Quest Options", questOptions)
@@ -856,7 +872,11 @@ function MultiTool:OnInitialize()
   LibStub("AceConfig-3.0"):RegisterOptionsTable("Profiles", LibStub("AceDBOptions-3.0"):GetOptionsTable(self.db))
 
   -- adding to Blizzard options configuration
-  self.optionsFrame = LibStub("AceConfigDialog-3.0"):AddToBlizOptions("Main Options", "MultiTool")
+  -- Note, we need to take the second return value for the ID so we can open to category later
+  -- only really needed on the main category since thats the only one we have a slash command for 
+  self.optionsFrame, self.OptionsFrameId = LibStub("AceConfigDialog-3.0"):AddToBlizOptions("MultiTool", "MultiTool")
+  self:debugMsg("optionsFrame: ".. self.OptionsFrameId, "blather") 
+
   self.optionsFrame.debugOptions = LibStub("AceConfigDialog-3.0"):AddToBlizOptions("Debug Options", L["DEBUG_OPTIONS_NAME"], "MultiTool")
   self.optionsFrame.partyOptions = LibStub("AceConfigDialog-3.0"):AddToBlizOptions("Party Options", L["PARTY_OPTIONS_NAME"], "MultiTool")
   self.optionsFrame.questOptions = LibStub("AceConfigDialog-3.0"):AddToBlizOptions("Quest Options", L["QUEST_OPTIONS_NAME"], "MultiTool")
@@ -930,6 +950,8 @@ function MultiTool:OnEnable()
   
 
   self:Print("MultiTool "..myVersion.." ENABLED!")
+  
+
 end
 
 
@@ -2685,4 +2707,26 @@ function MultiTool:forceDebug(forceFlag, origLevel)
 	else
 		return origLevel;
 	end
+end
+
+function MultiTool:dumpTablee(t, indent)
+  assert(type(t) == "table", "PrintTable() called for non-table!")
+ 
+  local indentString = ""
+  for i = 1, indent do
+    indentString = indentString .. "  "
+  end
+ 
+  for k, v in pairs(t) do
+    if type(v) ~= "table" then
+      if type(v) == "string" then
+        print(indentString, k, "=", v)
+      end
+    else
+      print(indentString, k, "=")
+      print(indentString, "  {")
+      PrintTable(v, indent + 2)
+      print(indentString, "  }")
+    end
+  end
 end
