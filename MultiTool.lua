@@ -11,11 +11,11 @@ NOTE TO SELF
 
 Author: DigitalSorceress
 Date: 2026/03/04
-Version: v10.0.0.003
+Version: 10.0.1.000
 ]]
 
 -- Some initialization of our happy local vars
-local myVersion = "v10.0.0.003"
+local myVersion = "v10.0.1.000"
 
 local cat = "empty"
 local foo = "empty"

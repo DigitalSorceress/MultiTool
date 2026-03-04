@@ -2,8 +2,8 @@
 MultiTool English language localization
 
 Author: DigitalSorceress
-Date: 2021/03/12
-Version: 9.0.5.001
+Date: 2026/03/04
+Version: 10.0.1.000
 ]]
 
 -- Sets up the AceLocale for this addon with enUS as default localisation
