@@ -10,12 +10,12 @@ NOTE TO SELF
 /console scriptErrors 1
 
 Author: DigitalSorceress
-Date: 2026/03/04
-Version: 10.0.1.000
+Date: 2026/03/07
+Version: 10.0.2.000
 ]]
 
 -- Some initialization of our happy local vars
-local myVersion = "v10.0.1.000"
+local myVersion = "v10.0.2.000"
 
 local cat = "empty"
 local foo = "empty"
@@ -1241,20 +1241,48 @@ function MultiTool:confirmPartyInvite(info, sender)
     self:debugMsg("  IGNORED: groupRejectFlag is false and either groupFlag is false or sender not in white list", "blather")
   end
 
+
+
+
+
   -- Had to move the hide popup here after 3.1 to keep the hide from causing a false decline
   if actionTaken then
-    -- BIG thank you to Borlox from the wowace forums for this little fix!
-    for i=1, STATICPOPUP_NUMDIALOGS do
-        local dlg = _G["StaticPopup"..i]
-        if dlg.which == "PARTY_INVITE" then
-            dlg.inviteAccepted = 1
-            break
-        end
-    end
+  	self:swatDialog("PARTY_INVITE")
+
+--[[
+-- how this works
+	function StaticPopup_ForEachShownDialog(func)
+		for _, dialog in ipairs(shownDialogFrames) do
+			func(dialog);
+		end
+		return nil;
+	end
+]]--
+-- This old code stopped working due to a change in API 11.something
+--    for i=1, STATICPOPUP_NUMDIALOGS do
+--        local dlg = _G["StaticPopup"..i]
+--        if dlg.which == "PARTY_INVITE" then
+--            dlg.inviteAccepted = 1
+--            break
+--        end
+--    end
 
     StaticPopup_Hide("PARTY_INVITE")
   end
 end
+
+function MultiTool:swatDialog(dlgWhich)
+	-- Values I swat
+	-- "PARTY_INVITE"
+	-- "other_thing"
+	for _, dialog in ipairs(shownDialogFrames) do
+		if dialog.which == dlgWhich then
+	    	dialog.inviteAccepted = 1
+		end
+	end
+end
+
+
 
 
 --

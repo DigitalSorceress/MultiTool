@@ -1,4 +1,18 @@
-MultiTool:ChangeLog           v9.0.5.001        2021/03/12      DigitalSorceress
+MultiTool:ChangeLog           v10.0.2.000       2026/03/07      DigitalSorceress
+
+
+v10.0.2.000 - 2026-03-07
+  - FIXED: Accept group invite was working but the dialog was not being dismissed, causing an error
+  - FIXED: found other dialog Dismiss to fix too
+  
+v10.0.1.000 - 2026-03-06
+  Released with a semi stable state (but more bug fixes in the works)
+
+v10.0.0.004 - 2026-03-04
+  Continued bug swatting (loading bugs / conflicts with other ACE3 based addons fixed)
+
+v10.0.0.000 - 2026-03-03
+  Fixed up ToC and started swatting bugs from API changes since last time I played
 
 v9.0.5.001
   Trying to get curseforge to build / package my addon

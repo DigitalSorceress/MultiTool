@@ -1,6 +1,6 @@
 # MultiTool:ReadMe
-- Version: 10.0.1.000
-- Date: 2026/03/04
+- Version: 10.0.2.000
+- Date: 2026/03/07
 - Author: DigitalSorceress
 
 ##SUMMARY
