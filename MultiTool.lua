@@ -1242,48 +1242,13 @@ function MultiTool:confirmPartyInvite(info, sender)
   end
 
 
-
-
-
   -- Had to move the hide popup here after 3.1 to keep the hide from causing a false decline
+  -- Not sure if this is relevant in 12.1 but doing it anyway
   if actionTaken then
-  	self:swatDialog("PARTY_INVITE")
-
---[[
--- how this works
-	function StaticPopup_ForEachShownDialog(func)
-		for _, dialog in ipairs(shownDialogFrames) do
-			func(dialog);
-		end
-		return nil;
-	end
-]]--
--- This old code stopped working due to a change in API 11.something
---    for i=1, STATICPOPUP_NUMDIALOGS do
---        local dlg = _G["StaticPopup"..i]
---        if dlg.which == "PARTY_INVITE" then
---            dlg.inviteAccepted = 1
---            break
---        end
---    end
-
+  	self:debugMsg("  actionTaken handler... ", "blather")
     StaticPopup_Hide("PARTY_INVITE")
   end
 end
-
-function MultiTool:swatDialog(dlgWhich)
-	-- Values I swat
-	-- "PARTY_INVITE"
-	-- "other_thing"
-	for _, dialog in ipairs(shownDialogFrames) do
-		if dialog.which == dlgWhich then
-	    	dialog.inviteAccepted = 1
-		end
-	end
-end
-
-
-
 
 --
 -- Auto Accept Summons
