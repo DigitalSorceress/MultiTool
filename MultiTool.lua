@@ -148,11 +148,17 @@ local partyOptions = {
           desc = L["GROUP_DESC"],
           order = 1
         },
+        groupGuildAutoAcceptFlag = {
+          type = "toggle",
+          name = "Accept From My Guild",
+          desc = "Override to always auto accept invites from guild mates",
+          order = 2
+        },
         groupRejectFlag = {
           type = "toggle",
           name = L["GROUP_REJECT_NAME"],
           desc = L["GROUP_REJECT_DESC"],
-          order = 2
+          order = 3
         }
       }
     },
@@ -683,6 +689,7 @@ local defaults = {
     tradeFlag = false,
     whiteList = {GetUnitName("player")},
     groupFlag = true,
+    groupGuildAutoAcceptFlag = true;
     groupRejectFlag = false,
     summonFlag = true,
     summonWhiteListOnlyFlag = true,
@@ -847,7 +854,13 @@ function MultiTool:ChatCommand(input)
   	-- this was a test and it did not work
   	--C_CombatAudioAlert.SpeakText("MultiTool", 0, true)
   	self:debugMsg("MultiTool: chat command: ".. input, "debug")
-    LibStub("AceConfigCmd-3.0").HandleCommand(MultiTool, L["SHORT_SLASH_CMD"], "MultiTool", input)
+  	if (input == "guildInfo") then
+
+		local shortform = self:IsGuildMemberByName("Kyo");
+		self:debugMsg("shortform:" .. tostring(shortform), "debug");
+
+  	end
+    --LibStub("AceConfigCmd-3.0").HandleCommand(MultiTool, L["SHORT_SLASH_CMD"], "MultiTool", input)
   end
 end
 
@@ -912,8 +925,6 @@ function MultiTool:OnEnable()
   self:RegisterEvent("GOSSIP_SHOW", "testGossipShow");
   self:RegisterEvent("QUEST_GREETING", "testQuestGreeting");
   self:RegisterEvent("QUEST_DETAIL", "testQuestDetail");
-
-
 
 
   -- Looks like AcceptTrade() is protected - may not be able to do this one
@@ -998,71 +1009,71 @@ end
 
 -- Fires when autofollow started
 function MultiTool:followBegin( info, followee )
-  self:debugMsg("followBegin()", "debug");
-  self:debugMsg("  info: "..tostring( info ), "debug");
-  self:debugMsg("  followee: "..tostring( followee ), "debug");
-  self:debugMsg("  oldFollowee: "..tostring( self.myFollowTarget ), "debug");
+	self:debugMsg("followBegin()", "debug");
+	self:debugMsg("  info: "..tostring( info ), "debug");
+	self:debugMsg("  followee: "..tostring( followee ), "debug");
+	self:debugMsg("  oldFollowee: "..tostring( self.myFollowTarget ), "debug");
 
-  -- This would be a good place to send an rpc message to the person you're following
-  -- possible future use: to update the current "leader" as to who is following them
+	-- This would be a good place to send an rpc message to the person you're following
+	-- possible future use: to update the current "leader" as to who is following them
 
-  if self.followWarnTimer then
-    self:debugMsg("  followWarnTimer found... cancelling", "debug");
-    local result = self:CancelTimer(self.followWarnTimer, true);
-    self:debugMsg("    result: "..tostring(result), "result");
-  end
+	if self.followWarnTimer then
+		self:debugMsg("  followWarnTimer found... cancelling", "debug");
+		local result = self:CancelTimer(self.followWarnTimer, true);
+		self:debugMsg("  result: "..tostring(result), "result");
+	end
 
-  self.myFollowTarget = tostring(followee); 
+	self.myFollowTarget = tostring(followee); 
 end
 
 
 -- Fires when autofollow ends
 function MultiTool:followEnd( info )
-  self:debugMsg("followEnd()", "debug");
-  self:debugMsg("  info: "..tostring( info ), "debug");
-  self:debugMsg("  currentFollowee: "..tostring( self.myFollowTarget ), "debug");
+	self:debugMsg("followEnd()", "debug");
+	self:debugMsg("  info: "..tostring( info ), "debug");
+	self:debugMsg("  currentFollowee: "..tostring( self.myFollowTarget ), "debug");
 
-  -- Send MultiTool message to myFollowTarget letting them know that I lost them
+	-- Send MultiTool message to myFollowTarget letting them know that I lost them
 
-    local rpcArgs = {}
+	local rpcArgs = {};
 
-    rpcArgs.prefix = "MultiTool"
-    local msg = {
-      op = "FOLLOW_LOST",
-      follower_name = UnitName("player"),
-      followee_name = self.myFollowTarget
-    }
-    rpcArgs.text = self:Serialize(msg)
+	rpcArgs.prefix = "MultiTool";
+	local msg = {
+		op = "FOLLOW_LOST",
+		follower_name = UnitName("player"),
+		followee_name = self.myFollowTarget
+	};
+	rpcArgs.text = self:Serialize(msg);
 
-    rpcArgs.distribution = "WHISPER"
-    rpcArgs.target = self.myFollowTarget
-    rpcArgs.prio = "ALERT"
-    rpcArgs.noComm = nil
-    
-    -- rpcCommandSender adds checking of the noComm value before sending
-    --self:rpcCommandSender(prefix, text, distribution, target, prio, noComm)
-    if self.followWarnTimer then
-      self:debugMsg("  followWarnTimer found... cancelling", "debug");
-      local result = self:CancelTimer(self.followWarnTimer, true);
-      self:debugMsg("    result: "..tostring( result ), "result");
-    end
-    self:debugMsg("  setting new followWarnTimer", "debug");
-    --self.followWarnTimer = self:ScheduleTimer(rpcCommandSender, 1, prefix, text, distribution, target, prio, noComm)
-    self.followWarnTimer = self:ScheduleTimer("rpcCommandSenderWrapper", 2, rpcArgs);
+	rpcArgs.distribution = "WHISPER";
+	rpcArgs.target = self.myFollowTarget;
+	rpcArgs.prio = "ALERT";
+	rpcArgs.noComm = nil;
+
+	-- rpcCommandSender adds checking of the noComm value before sending
+	--self:rpcCommandSender(prefix, text, distribution, target, prio, noComm)
+	if self.followWarnTimer then
+		self:debugMsg("  followWarnTimer found... cancelling", "debug");
+		local result = self:CancelTimer(self.followWarnTimer, true);
+		self:debugMsg("    result: "..tostring( result ), "result");
+	end
+	self:debugMsg("  setting new followWarnTimer", "debug");
+	--self.followWarnTimer = self:ScheduleTimer(rpcCommandSender, 1, prefix, text, distribution, target, prio, noComm)
+	self.followWarnTimer = self:ScheduleTimer("rpcCommandSenderWrapper", 2, rpcArgs);
 end
 
 
 -- To make this compatible with AceCallback, I had to wrap it up with a table of args instead of discrete ones
 function MultiTool:rpcCommandSenderWrapper( rpcArgs )
-  self:debugMsg("rpcCommandSenderWrapper()", "rpc");
-  self:debugMsg("  prefix: "..tostring( rpcArgs.prefix ), "rpc");
-  self:debugMsg("  text: "..tostring( rpcArgs.text ), "rpc");
-  self:debugMsg("  distribution: "..tostring( rpcArgs.distribution ), "rpc");
-  self:debugMsg("  target: "..tostring( rpcArgs.target ), "rpc");
-  self:debugMsg("  prio: "..tostring( rpcArgs.prio ), "rpc");
-  self:debugMsg("  noComm: "..tostring( rpcArgs.noComm ), "rpc");
-
-  self:rpcCommandSender(rpcArgs.prefix, rpcArgs.text, rpcArgs.distribution, rpcArgs.target, rpcArgs.prio, rpcArgs.noComm)
+	self:debugMsg("rpcCommandSenderWrapper()", "rpc");
+	self:debugMsg("  prefix: "..tostring( rpcArgs.prefix ), "rpc");
+	self:debugMsg("  text: "..tostring( rpcArgs.text ), "rpc");
+	self:debugMsg("  distribution: "..tostring( rpcArgs.distribution ), "rpc");
+	self:debugMsg("  target: "..tostring( rpcArgs.target ), "rpc");
+	self:debugMsg("  prio: "..tostring( rpcArgs.prio ), "rpc");
+	self:debugMsg("  noComm: "..tostring( rpcArgs.noComm ), "rpc");
+	
+	self:rpcCommandSender(rpcArgs.prefix, rpcArgs.text, rpcArgs.distribution, rpcArgs.target, rpcArgs.prio, rpcArgs.noComm)
 end
 
 
@@ -1070,8 +1081,8 @@ end
 -- Need delayed accept resurrection
 --
 function MultiTool:delayedAcceptResurrect()
-  self:debugMsg("delayedAcceptResurrect()", "debug");
-  AcceptResurrect();
+	self:debugMsg("delayedAcceptResurrect()", "debug");
+	AcceptResurrect();
 end
 
 
@@ -1079,90 +1090,54 @@ end
 -- Auto Accept Resurrection
 --
 function MultiTool:resurrectRequest(info, name, foo, bar)
-  self:debugMsg("resurrectRequest()", "debug");
-  self:debugMsg("  info: "..tostring(info), "debug");
-  self:debugMsg("  name: "..tostring(name), "debug");
-  self:debugMsg("  foo: "..tostring(foo), "debug");
-  self:debugMsg("  bar: "..tostring(bar), "debug");
-  
-  -- -- Apparently, don't need offerer as name seems to be passed
-  --local offerer = ResurrectGetOfferer();
-  --self:debugMsg("  name: "..tostring(offerer), "debug")
-
-  -- Only procede if they've got "Auto Acccept Resurrection" option checked
-  if ( self.db.profile.resurrectFlag ) then
-    self:debugMsg("  resurrectFlag is true...", "debug");
-
-    self:debugMsg("  checking resurrectWhiteListOnlyFlag...", "debug")
-    if not self.db.profile.resurrectWhiteListOnlyFlag or ( self.db.profile.resurrectWhiteListOnlyFlag and self:isInWhiteList( name ) ) then
-      self:debugMsg("    Conditions met... ACCEPTING", "debug");
-
-      local tmp_msgText = string.format(L["RESURRECT_WARN_MSG"], name);
-      self:debugMsg("  tmp_msgText: "..tmp_msgText, "blather");
-  
-      -- DO THE WARNING
-      self:playSoundByIndex(self.db.profile.resurrectWarnSound);
-      UIErrorsFrame:AddMessage(tmp_msgText, 1.0, 1.0, 0.5, 5.0);
-  
-      -- AcceptResurrect();
-      
-      local recoveryDelay = GetCorpseRecoveryDelay();
-      self:debugMsg("  recoveryDelay: "..tostring(recoveryDelay), "debug");
-
-      if ( recoveryDelay and recoveryDelay > 0 ) then
-        self:debugMsg("  Need to set up a timer to auto rez when ready", "debug");
-
-        -- set up timer
-        if self.resurrectTimer then
-          self:debugMsg("  resurrectTimer found... cancelling", "debug");
-          local cancelResult = self:CancelTimer( self.resurrectTimer, true );
-          self:debugMsg("    cancelResult: "..tostring(cancelResult), "debug");
-        end
-        
-        self.resurrectTimer = self:ScheduleTimer( "delayedAcceptResurrect", recoveryDelay + 1  );    
-        self:debugMsg("  Timer Set for "..tostring(recoveryDelay +1).." seconds", "debug");
-      else
-        self:debugMsg("  No delay needed... ACCEPTING", "debug");
-        AcceptResurrect();
-      end
-
-      
---      -- BIG thank you to Borlox from the wowace forums for this little fix!
---      for i=1, STATICPOPUP_NUMDIALOGS do
---        local dlg = _G["StaticPopup"..i];
---        if dlg.which == "RESURRECT_NO_SICKNESS" then
---          -- foo
---          --actionTaken = true;
---          --StaticPopup_Hide("RESURRECT_NO_SICKNESS")
---           self:debugMsg("  RESURRECT_NO_SICKNESS", "debug");
---           self:debugMsg("  delayText: "..tostring(dlg.delayText), "debug");
---          self:debugMsg("  text: "..tostring(dlg.text), "debug");
---        end
---        
---        if dlg.which == "RESURRECT" then
---          -- foo
---          --actionTaken = true;
---          --StaticPopup_Hide("RESURRECT")
---          self:debugMsg("  RESURRECT", "debug");
---
---          self:debugMsg("  delayText: "..tostring(dlg.delayText), "debug");
---          self:debugMsg("  text: "..tostring(dlg.text), "debug");
---
---        end
---        
---        if dlg.which == "RESURRECT_NO_TIMER" then
---          -- foo
---          --actionTaken = true;
---          --StaticPopup_Hide("RESURRECT_NO_TIMER")      
---          self:debugMsg("  RESURRECT_NO_TIMER", "debug");
---          self:debugMsg("  text: "..tostring(dlg.text), "debug");
---
---        end
---      end -- for loop
-      
-      
-    end -- whitelistCheck
-  end -- if resurrectFlag
+	self:debugMsg("resurrectRequest()", "debug");
+	self:debugMsg("  info: "..tostring(info), "debug");
+	self:debugMsg("  name: "..tostring(name), "debug");
+	self:debugMsg("  foo: "..tostring(foo), "debug");
+	self:debugMsg("  bar: "..tostring(bar), "debug");
+	
+	-- -- Apparently, don't need offerer as name seems to be passed
+	--local offerer = ResurrectGetOfferer();
+	--self:debugMsg("  name: "..tostring(offerer), "debug")
+	
+	-- Only procede if they've got "Auto Acccept Resurrection" option checked
+	if ( self.db.profile.resurrectFlag ) then
+		self:debugMsg("  resurrectFlag is true...", "debug");
+		
+		self:debugMsg("  checking resurrectWhiteListOnlyFlag...", "debug")
+		if not self.db.profile.resurrectWhiteListOnlyFlag or ( self.db.profile.resurrectWhiteListOnlyFlag and self:isInWhiteList( name ) ) then
+			self:debugMsg("    Conditions met... ACCEPTING", "debug");
+			
+			local tmp_msgText = string.format(L["RESURRECT_WARN_MSG"], name);
+			self:debugMsg("  tmp_msgText: "..tmp_msgText, "blather");
+			
+			-- DO THE WARNING
+			self:playSoundByIndex(self.db.profile.resurrectWarnSound);
+			UIErrorsFrame:AddMessage(tmp_msgText, 1.0, 1.0, 0.5, 5.0);
+			
+			-- AcceptResurrect();
+			
+			local recoveryDelay = GetCorpseRecoveryDelay();
+			self:debugMsg("  recoveryDelay: "..tostring(recoveryDelay), "debug");
+			
+			if ( recoveryDelay and recoveryDelay > 0 ) then
+				self:debugMsg("  Need to set up a timer to auto rez when ready", "debug");
+				
+				-- set up timer
+				if self.resurrectTimer then
+					self:debugMsg("  resurrectTimer found... cancelling", "debug");
+					local cancelResult = self:CancelTimer( self.resurrectTimer, true );
+					self:debugMsg("    cancelResult: "..tostring(cancelResult), "debug");
+				end
+				
+				self.resurrectTimer = self:ScheduleTimer( "delayedAcceptResurrect", recoveryDelay + 1  );    
+				self:debugMsg("  Timer Set for "..tostring(recoveryDelay +1).." seconds", "debug");
+			else
+				self:debugMsg("  No delay needed... ACCEPTING", "debug");
+				AcceptResurrect();
+			end
+		end -- whitelistCheck
+	end -- if resurrectFlag
 end -- function
 
 
@@ -1171,19 +1146,19 @@ end -- function
 --
 -- NOTE: It appears that due to abuse, AcceptTrade() is protected (unavailable)
 function MultiTool:tradeAcceptUpdate(info, player, target, foo)
-  self:debugMsg("tradeAcceptUpdate()", "debug")
-  self:debugMsg("  info: "..tostring(info), "debug")
-  self:debugMsg("  player: "..tostring(player), "debug")
-  self:debugMsg("  target: "..tostring(target), "debug")
-  self:debugMsg("  foo: "..tostring(foo), "debug")
-  
-  if (self.db.profile.tradeFlag) then
-    self:debugMsg("    tradeFlag is true... continuing", "debug")
-    if (target == 1 and player == 0) then
-      --AcceptTrade()
-      self:debugMsg("    ACCEPTED", "debug")
-    end
-  end  
+	self:debugMsg("tradeAcceptUpdate()", "debug");
+	self:debugMsg("  info: "..tostring(info), "debug");
+	self:debugMsg("  player: "..tostring(player), "debug");
+	self:debugMsg("  target: "..tostring(target), "debug");
+	self:debugMsg("  foo: "..tostring(foo), "debug");
+	
+	if (self.db.profile.tradeFlag) then
+		self:debugMsg("    tradeFlag is true... continuing", "debug");
+		if (target == 1 and player == 0) then
+			--AcceptTrade();
+			self:debugMsg("    ACCEPTED", "debug");
+		end
+	end  
 end
 
 
@@ -1191,27 +1166,27 @@ end
 -- Auto Accept Escort Quests
 --
 function MultiTool:confirmEscortQuest(info, name, quest)
-  self:debugMsg("confirmEscortQuest()", "debug")
-  self:debugMsg("  info: "..tostring(info), "debug")
-  self:debugMsg("  name: "..tostring(name), "debug")
-  self:debugMsg("  quest: "..tostring(quest), "debug")
-  
-  -- Only procede if they've got "Auto Acccept Escort Quests" option checked
-  if (self.db.profile.escortFlag) then
-    self:debugMsg("  escortFlag is true... ACCEPTING", "debug")
-    
-    -- need to localize this
-    local tmp_msgText = string.format(L["ESCORT_WARN_MSG"], quest, name)
-    self:debugMsg("  tmp_msgText: "..tmp_msgText, "blather")
-  
-    -- DO THE WARNING
-    self:playSoundByIndex(self.db.profile.escortStartedSound)
-    UIErrorsFrame:AddMessage(tmp_msgText, 1.0, 1.0, 0.5, 5.0)
-    
-    -- Done with preprocessing, now accept and hide the confirm dialog
-    ConfirmAcceptQuest()
-    StaticPopup_Hide("QUEST_ACCEPT")
-  end
+	self:debugMsg("confirmEscortQuest()", "debug");
+	self:debugMsg("  info: "..tostring(info), "debug");
+	self:debugMsg("  name: "..tostring(name), "debug");
+	self:debugMsg("  quest: "..tostring(quest), "debug");
+	
+	-- Only procede if they've got "Auto Acccept Escort Quests" option checked
+	if (self.db.profile.escortFlag) then
+		self:debugMsg("  escortFlag is true... ACCEPTING", "debug");
+		
+		-- need to localize this
+		local tmp_msgText = string.format(L["ESCORT_WARN_MSG"], quest, name);
+		self:debugMsg("  tmp_msgText: "..tmp_msgText, "blather");
+		
+		-- DO THE WARNING
+		self:playSoundByIndex(self.db.profile.escortStartedSound);
+		UIErrorsFrame:AddMessage(tmp_msgText, 1.0, 1.0, 0.5, 5.0);
+		
+		-- Done with preprocessing, now accept and hide the confirm dialog
+		ConfirmAcceptQuest();
+		StaticPopup_Hide("QUEST_ACCEPT");
+	end
 end
 
 
@@ -1223,83 +1198,94 @@ end
 --       whitelist. If the groupRejectFlag is set, then NOT being in the 
 --       whitelist means active rejection.
 function MultiTool:confirmPartyInvite(info, sender)
-  self:debugMsg("confirmPartyInvite()", "debug")
-  self:debugMsg("  sender: "..tostring(sender), "blather")
-  
-  local actionTaken = false;
-  
-  if (self.db.profile.groupRejectFlag and not self:isInWhiteList(sender)) then
-    self:debugMsg("  DECLINED: groupRejectFlag is true and sender is not in white list", "blather")
-    -- actively reject and get lost
-    DeclineGroup()
-    actionTaken = true
-  elseif (self.db.profile.groupFlag and self:isInWhiteList(sender)) then
-    self:debugMsg("  ACCEPTED: groupFlag is true and sender in white list", "blather")
-    AcceptGroup()
-    actionTaken = true
-  else
-    self:debugMsg("  IGNORED: groupRejectFlag is false and either groupFlag is false or sender not in white list", "blather")
-  end
+	self:debugMsg("confirmPartyInvite()", "debug");
+	self:debugMsg("  sender: "..tostring(sender), "debug");
+	
+	local isInMyGuild = self:IsGuildMemberByName(tostring(sender));
+	self:debugMsg("  isInMyGuild: "..tostring(isInMyGuild), "debug");
 
 
-  -- Had to move the hide popup here after 3.1 to keep the hide from causing a false decline
-  -- Not sure if this is relevant in 12.1 but doing it anyway
-  if actionTaken then
-  	self:debugMsg("  actionTaken handler... ", "blather")
-    StaticPopup_Hide("PARTY_INVITE")
-  end
+	local actionTaken = false;
+
+	if (self.db.profile.groupRejectFlag and not self:isInWhiteList(sender)) then
+		self:debugMsg("  DECLINED: groupRejectFlag is true and sender is not in white list", "blather");
+		-- actively reject and get lost
+		DeclineGroup();
+		actionTaken = true;
+	elseif (self.db.profile.groupGuildAutoAcceptFlag) then
+		self:debugMsg("  ACCEPTED: groupGuildAutoAcceptFlag is true (whitelist skipped)", "blather");
+		AcceptGroup();
+		actionTaken = true;
+	elseif (self.db.profile.groupFlag and self:isInWhiteList(sender)) then
+		self:debugMsg("  ACCEPTED: groupFlag is true and sender in white list", "blather");
+		AcceptGroup();
+		actionTaken = true;
+	else
+		self:debugMsg("  IGNORED: groupRejectFlag is false and either groupFlag is false or sender not in white list", "blather");
+	end
+
+	-- Had to move the hide popup here after 3.1 to keep the hide from causing a false decline
+	-- Not sure if this is relevant in 12.1 but doing it anyway
+	if actionTaken then
+		self:debugMsg("  actionTaken handler... ", "blather");
+		StaticPopup_Hide("PARTY_INVITE");
+	end
 end
+
 
 --
 -- Auto Accept Summons
 --
 function MultiTool:confirmSummon()
-  if (self.db.profile.summonFlag) then
-    self:debugMsg("confirmSummon()", "debug")
-    
-    local acceptFlag = false
-    -- get summonor name
-    local summoner = GetSummonConfirmSummoner()
-    self:debugMsg("  summoner: ".. tostring(summoner), "blather")
-    local location = GetSummonConfirmAreaName()
-    self:debugMsg("  location: ".. tostring(location), "blather")
+	if (self.db.profile.summonFlag) then
+		self:debugMsg("confirmSummon()", "debug");
 
-    -- see if it's white list only
-    if (self.db.profile.summonWhiteListOnlyFlag) then
-      self:debugMsg("  summonWhiteListOnlyFlag is true... further checks needed", "blather")
-      -- need another check since they asked for it
-      if (self:isInWhiteList(summoner)) then
-        self:debugMsg("    Summoner is in white list", "blather")
-        -- accept
-        acceptFlag = true
-      else
-        self:debugMsg("    Summoner is NOT in white list... manually confirm if you wish", "blather")
-      end
-    else
-      -- not summonWhiteListOnlyFlag, so always accept since we have summonFlag on
-      self:debugMsg("  summonFlag is true and not restricted to white list only", "blather")
-      acceptFlag = true
-    end
-      
-    self:debugMsg("  Seeing if we should accept", "blather")
-    self:debugMsg("    acceptFlag: "..tostring(acceptFlag), "blather")
+		local acceptFlag = false;
+		-- get summonor name
+		local summoner = GetSummonConfirmSummoner();
+		self:debugMsg("  summoner: ".. tostring(summoner), "debug");
+		local location = GetSummonConfirmAreaName();
+		self:debugMsg("  location: ".. tostring(location), "debug");
+		
+		local guildName, _, _ = GetGuildInfo(summoner);
+		self:debugMsg("  guildName: ".. tostring(guildName), "debug");
 
-    if (acceptFlag) then
-      self:debugMsg("  ACCEPTED: Confirming summons", "blather")
-    
-      -- need to localize this
-      local tmp_msgText = string.format(L["SUMMON_WARN_MSG"], location, summoner)
-      self:debugMsg("  tmp_msgText: "..tmp_msgText, "blather")
-    
-      -- DO THE WARNING
-      self:playSoundByIndex(self.db.profile.summonWarnSound)
-      UIErrorsFrame:AddMessage(tmp_msgText, 1.0, 1.0, 0.5, 5.0)
+		-- see if it's white list only
+		if (self.db.profile.summonWhiteListOnlyFlag) then
+			self:debugMsg("  summonWhiteListOnlyFlag is true... further checks needed", "blather");
+			-- need another check since they asked for it
+			if (self:isInWhiteList(summoner)) then
+				self:debugMsg("    Summoner is in white list", "blather");
+				-- accept
+				acceptFlag = true;
+			else
+				self:debugMsg("    Summoner is NOT in white list... manually confirm if you wish", "blather");
+			end
+		else
+			-- not summonWhiteListOnlyFlag, so always accept since we have summonFlag on
+			self:debugMsg("  summonFlag is true and not restricted to white list only", "blather");
+			acceptFlag = true;
+		end
 
-      -- take the ride and then hide the dialog
-      ConfirmSummon()
-      StaticPopup_Hide("CONFIRM_SUMMON")
-    end
-  end
+		self:debugMsg("  Seeing if we should accept", "blather");
+		self:debugMsg("    acceptFlag: "..tostring(acceptFlag), "blather");
+
+		if (acceptFlag) then
+			self:debugMsg("  ACCEPTED: Confirming summons", "blather");
+			
+			-- need to localize this
+			local tmp_msgText = string.format(L["SUMMON_WARN_MSG"], location, summoner);
+			self:debugMsg("  tmp_msgText: "..tmp_msgText, "blather");
+			
+			-- DO THE WARNING
+			self:playSoundByIndex(self.db.profile.summonWarnSound);
+			UIErrorsFrame:AddMessage(tmp_msgText, 1.0, 1.0, 0.5, 5.0);
+			
+			-- take the ride and then hide the dialog
+			ConfirmSummon();
+			StaticPopup_Hide("CONFIRM_SUMMON");
+		end
+	end
 end
 
 
@@ -1307,16 +1293,16 @@ end
 -- Auto Decline Duels
 --
 function MultiTool:duelRequested(info, challenger)
-  self:debugMsg("duelRequested()", "debug")
-  if (self.db.profile.duelAcceptFlag and self:isInWhiteList(challenger)) then
-    -- don't do anything, thereby allowing choice to accept duel or not
-    return
-  elseif (self.db.profile.duelFlag) then
-    self:debugMsg("Duel denied from challenger:"..tostring(challenger), "blather")
-
-    CancelDuel();
-    StaticPopup_Hide("DUEL_REQUESTED")
-  end -- if duelFlag
+	self:debugMsg("duelRequested()", "debug")
+	if (self.db.profile.duelAcceptFlag and self:isInWhiteList(challenger)) then
+		-- don't do anything, thereby allowing choice to accept duel or not
+		return
+	elseif (self.db.profile.duelFlag) then
+		self:debugMsg("Duel denied from challenger:"..tostring(challenger), "blather")
+		
+		CancelDuel();
+		StaticPopup_Hide("DUEL_REQUESTED")
+	end -- if duelFlag
 end -- function duelRequested()
 
 
@@ -1324,11 +1310,11 @@ end -- function duelRequested()
 -- Wrapper for auto repair and auto sell gray
 --
 function MultiTool:autoMerchant()
-  self:debugMsg("autoMerchant()", "debug")
-  -- let's sell first - just in case we need repair money
-  self:autoSellJunk()
-  -- Now, repair all
-  self:autoRepair()
+	self:debugMsg("autoMerchant()", "debug")
+	-- let's sell first - just in case we need repair money
+	self:autoSellJunk()
+	-- Now, repair all
+	self:autoRepair()
 end
 
 
@@ -1336,42 +1322,41 @@ end
 -- Auto Sell Junk - Inspired by CrapAway
 --
 function MultiTool:autoSellJunk()
-  if (self.db.profile.vendJunkFlag) then
-    self:debugMsg("autoSellJunk()", "debug")
-
-    -- iterate through bags
-    for bag = 0, 4 do
-      self:debugMsg("  bag"..tostring(bag), "blather")
-      -- need to know the number of slots we have to look in
-      local numSlots = C_Container.GetContainerNumSlots(bag)
-      self:debugMsg("  bag"..tostring(bag)..": "..numSlots.." total slots", "blather")
-
-      -- we have slots
-      if (numSlots > 0) then
-        -- go through items in bag
-        for slot = 1, numSlots + 1 do
-          self:debugMsg("   slot: "..tostring(slot), "blather")
-          local currentItem = C_Container.GetContainerItemLink(bag,slot)
-          self:debugMsg("   currentItem: "..tostring(currentItem), "blather")
-           
-          if (currentItem ~= nil) then
-            -- Gotta get the item info using the link
-            
-            -- local currentItemQuality = Select(3, GetItemInfo(currentItem))
-            local currentItemQuality = nil
-            GetItemInfo(currentItem)
-             _,_,currentItemQuality,_,_,_,_,_,_,_ = GetItemInfo(currentItem)
-             self:debugMsg("     currentItemQuality: "..tostring(currentItemQuality), "blather")
-            if (currentItemQuality ~= nil and currentItemQuality == 0) then
-              C_Container.UseContainerItem(bag,slot)
-            end
-          end
-        end
-      end
-    end -- end for loop
-  end -- if vendJunkFlag
+	if (self.db.profile.vendJunkFlag) then
+		self:debugMsg("autoSellJunk()", "debug");
+		
+		-- iterate through bags
+		for bag = 0, 4 do
+			self:debugMsg("  bag"..tostring(bag), "blather");
+			-- need to know the number of slots we have to look in
+			local numSlots = C_Container.GetContainerNumSlots(bag);
+			self:debugMsg("  bag"..tostring(bag)..": "..numSlots.." total slots", "blather");
+			
+			-- we have slots
+			if (numSlots > 0) then
+				-- go through items in bag
+				for slot = 1, numSlots + 1 do
+					self:debugMsg("   slot: "..tostring(slot), "blather");
+					local currentItem = C_Container.GetContainerItemLink(bag,slot);
+					self:debugMsg("   currentItem: "..tostring(currentItem), "blather");
+					 
+					if (currentItem ~= nil) then
+						-- Gotta get the item info using the link
+						
+						-- local currentItemQuality = Select(3, GetItemInfo(currentItem))
+						local currentItemQuality = nil;
+						GetItemInfo(currentItem);
+						 _,_,currentItemQuality,_,_,_,_,_,_,_ = GetItemInfo(currentItem);
+						 self:debugMsg("     currentItemQuality: "..tostring(currentItemQuality), "blather");
+						if (currentItemQuality ~= nil and currentItemQuality == 0) then
+							C_Container.UseContainerItem(bag,slot);
+						end
+					end
+				end
+			end
+		end -- end for loop
+	end -- if vendJunkFlag
 end -- autoSellJunk()
-
 
 
 --
@@ -1494,9 +1479,9 @@ function MultiTool:autoRepair()
 					local postPostRepairRawAmount = nil;
 					local postPostRepairNeedRepair = nil;
 					postPostRepairRawAmount, postPostRepairNeedRepair = GetRepairAllCost();
-				    self:debugMsg("  Checking to see if final repair worked or not: ", "notice");
-				    self:debugMsg("    postPostRepairRawAmount: "..tostring(postPostRepairRawAmount), "notice");
-				    self:debugMsg("    postPostRepairNeedRepair: "..tostring(postPostRepairNeedRepair), "notice");
+				 	self:debugMsg("  Checking to see if final repair worked or not: ", "notice");
+				 	self:debugMsg("    postPostRepairRawAmount: "..tostring(postPostRepairRawAmount), "notice");
+				 	self:debugMsg("    postPostRepairNeedRepair: "..tostring(postPostRepairNeedRepair), "notice");
 				end
 				
 				-- Send a repair warning message if they've enabled repairWarnFlag
@@ -2546,6 +2531,69 @@ function MultiTool:myGetActiveTitle( index )
     local questTitle = availbleQuestsTable[index]
     self:debugMsg("  questTitle: "..tostring(questTitle), "debug");
     return tostring(questTitle)
+end
+
+-- Theoretcially, isGuildMember = IsGuildMember( "name_of_inviter" )
+-- would be what you want...  see-- https://warcraft.wiki.gg/wiki/API_IsGuildMember
+-- However, it does not work as expected if you're not already in a party or raid
+-- with the person inviting
+-- since this addon needs to know ahead of time if you're in the same guild for some checks
+-- this code is the workaround I wroge - see 
+-- see https://warcraft.wiki.gg/wiki/Talk:API_IsGuildMember
+--
+-- given a player name, it will check against the guild roster
+-- returns false if player not in guild (or is offline if onlineOnly is true)
+-- returns the index in the current roster if player is in guild
+-- Most of the time what you really want is just IsGuildMemberByName("player_name_here")
+function MultiTool:IsGuildMemberByName(playerName, onlineOnly)
+	self:debugMsg("IsGuildMemberByName(playerName, onlineOnly) ...", "debug");
+	self:debugMsg("  playerName: "..tostring(playerName), "debug");
+	self:debugMsg("  onlineOnly: "..tostring(onlineOnly), "debug");
+	
+	-- first thing - am I in a guild
+	-- if not we just return false
+	local playerIsInGuild = IsInGuild();
+	if (not playerIsInGuild) then
+		self:debugMsg("  Player(self) is not in a guild returning false", "blather");
+		return false;
+	else
+		self:debugMsg("  Player(self) is in aguild returning false", "blather");
+	end
+
+	-- If we get to here we are in a guild
+	-- get my own guild Info
+	self:debugMsg("  Getting number in guild and online...", "blather");
+	local numTotal, numOnline = GetNumGuildMembers();
+	self:debugMsg("    numTotal: "..tostring(numTotal), "blather");
+	self:debugMsg("    numOnline: "..tostring(numOnline), "blather");
+
+	-- decide if we want to include all or just online members
+	-- useful if we're doing an interactive check for something like
+	-- someone just invited me, are they in my guild does not need to iterate
+	-- a potentially large guild list
+	local maxIndex = 0;
+	if (onlineOnly) then
+		maxIndex = numOnline;
+		self:debugMsg("    Limited to Online Only: "..tostring(maxIndex), "blather");
+	else
+		maxIndex = numTotal;
+		self:debugMsg("    Using total guild count: "..tostring(maxIndex), "blather");
+	end
+
+	for index = 1, maxIndex do
+		local name = GetGuildRosterInfo(index);
+		self:debugMsg("  name: "..tostring(name), "blather");
+
+		if (name == playerName) then
+			self:debugMsg("  Match found - target player is in guild - returning true", "debug");
+			return index;
+		else
+			self:debugMsg("  No Match... checking next name", "blather");
+		end	
+	end
+	-- ultimate fallthrough if we had an error
+	self:debugMsg("  No Match found.. returning false", "debug");
+	return false;
 end
 
 ------------------
