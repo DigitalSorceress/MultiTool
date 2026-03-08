@@ -126,8 +126,15 @@ I've got a LOT of little things I'd like to do with this addon over time. Some o
 - Group Hearth - Not Started
   Command to cause all in your group with MultiTool (in whitelist when I finally build that) to hearth
 
-- WhiteList BattlentFriends - Not started
-  Too many alts? whitelist all on account by battlenet friend ID
+- More useful Whitelisting for folks with lots of toons
+  - Whitelist BattlentFriends - Not started
+    - any BN Friend - Not started
+    - whitelist by BN Friend - Not started
+  - Whitelist Friends in general - Not started
+    - any Friend - Not started
+  - Whitelist Your Own Guild - Not started
+  	- White list by guild - Not started
+
 
 ## NOTES
 There are probably many things I can't think of at the moment, but this is a good wish-list.
