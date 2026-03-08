@@ -1,21 +1,26 @@
-MultiTool:ChangeLog           v10.0.2.000       2026/03/07      DigitalSorceress
+MultiTool:ChangeLog           v10.0.3.000       2026/03/08      DigitalSorceress
 
+v10.0.3.000 - 2026-03-08
+- Added new auto accept group invites from own Guild as a global override
+	- If it proves stable I'll loook to add to other areas too
+- General code cleanup to normalize indents to tabs and remove ; line endings to be more "lua-like"
+- Renamed some confusing locals from _NAME to _LABEL
 
 v10.0.2.000 - 2026-03-07
-  - FIXED: Accept group invite was working but the dialog was not being dismissed, causing an error
-  - FIXED: found other dialog Dismiss to fix too
-  
+- FIXED: Accept group invite was working but the dialog was not being dismissed, causing an error
+- FIXED: found other dialog Dismiss to fix too
+ 
 v10.0.1.000 - 2026-03-06
-  Released with a semi stable state (but more bug fixes in the works)
+- Released with a semi stable state (but more bug fixes in the works)
 
 v10.0.0.004 - 2026-03-04
-  Continued bug swatting (loading bugs / conflicts with other ACE3 based addons fixed)
+- Continued bug swatting (loading bugs / conflicts with other ACE3 based addons fixed)
 
 v10.0.0.000 - 2026-03-03
-  Fixed up ToC and started swatting bugs from API changes since last time I played
+- Fixed up ToC and started swatting bugs from API changes since last time I played
 
 v9.0.5.001
-  Trying to get curseforge to build / package my addon
+- Trying to get curseforge to build / package my addon
 
 v9.0.5.000
   Tagged for v9.0.5

@@ -10,12 +10,12 @@ NOTE TO SELF
 /console scriptErrors 1
 
 Author: DigitalSorceress
-Date: 2026/03/07
-Version: 10.0.2.000
+Date: 2026/03/08
+Version: 10.0.3.000
 ]]
 
 -- Some initialization of our happy local vars
-local myVersion = "v10.0.2.000"
+local myVersion = "v10.0.3.000"
 
 local cat = "empty"
 local foo = "empty"

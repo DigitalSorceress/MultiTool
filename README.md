@@ -1,6 +1,6 @@
 # MultiTool:ReadMe
-- Version: 10.0.2.000
-- Date: 2026/03/07
+- Version: 10.0.3.000
+- Date: 2026/03/08
 - Author: DigitalSorceress
 
 ##SUMMARY
@@ -9,7 +9,13 @@ MultiTool: A set of quality of life tools to help make folks who quest together'
 ## Rebooting the Addon
 I stopped playing Warcraft several expansions ago, but have gotten back into it, thus I resurrected this addon.
 
-First few releases in March 2026 will just be to fix issues broken since previous API changes. Then I'll look toward new features and updates.
+Been active in fixing bugs from API changes since I last updated.
+
+Added my first new feature in years: Auto Accept Invite for in my own guild
+
+Its a new option (on by default) that if auto accept group is true AND you've selected the guild override option, it will not bother checking whitelist
+
+I'll add more of this and likely battlenet friend stuff soon
 
 ## New Repo Home
 I have nothing against curseforce/wowace but I never cared much for the subversion repo used by wowace.
@@ -132,7 +138,7 @@ I've got a LOT of little things I'd like to do with this addon over time. Some o
     - whitelist by BN Friend - Not started
   - Whitelist Friends in general - Not started
     - any Friend - Not started
-  - Whitelist Your Own Guild - Not started
+  - Whitelist Your Own Guild - Implemented for group Invites v10.0.3.000
   	- White list by guild - Not started
 
 
