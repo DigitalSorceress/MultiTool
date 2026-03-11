@@ -11,11 +11,11 @@ NOTE TO SELF
 
 Author: DigitalSorceress
 Date: 2026/03/11
-Version: 10.0.3.001
+Version: 10.0.4.001
 ]]
 
 -- Some initialization of our happy local vars
-local myVersion = "v10.0.3.001"
+local myVersion = "v10.0.4.001"
 
 local cat = "empty"
 local foo = "empty"
@@ -839,10 +839,11 @@ function MultiTool:ChatCommand(input)
 		--C_CombatAudioAlert.SpeakText("MultiTool", 0, true)
 		self:debugMsg("MultiTool: chat command: ".. input, "debug")
 		if (input == "guildInfo") then
-
-		local shortform = self:IsGuildMemberByName("Kyo")
-		self:debugMsg("shortform:" .. tostring(shortform), "debug")
-
+			local shortform = self:IsGuildMemberByName("Kyo")
+			self:debugMsg("shortform:" .. tostring(shortform), "debug")
+		end
+		if (input == "qcount") then
+			self:annonceQcount()
 		end
 		--LibStub("AceConfigCmd-3.0").HandleCommand(MultiTool, L["SHORT_SLASH_CMD"], "MultiTool", input)
 	end
@@ -884,7 +885,7 @@ function MultiTool:OnInitialize()
 	-- registering the slash commands
 	self:RegisterChatCommand(L["FULL_SLASH_CMD"], "ChatCommand")
 	self:RegisterChatCommand(L["SHORT_SLASH_CMD"], "ChatCommand")
-	self:RegisterChatCommand("help", "helpDialog")
+	self:RegisterChatCommand("qcount", "annonceQcount")
 
 	-- Registering the base communications handler
 	self:RegisterComm("MultiTool","OnCommReceived")
@@ -1066,6 +1067,12 @@ function MultiTool:delayedAcceptResurrect()
 	AcceptResurrect()
 end
 
+
+function MultiTool:annonceQcount()
+	local _, numQuests = C_QuestLog.GetNumQuestLogEntries()
+	self:debugMsg("Num Quest Log Entries: " .. tostring(numQuests), "warn")
+	self:debugMsg("Num Quest Log Entries: " .. tostring(numQuests), "notice")
+end
 
 --
 -- Auto Accept Resurrection

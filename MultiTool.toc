@@ -2,7 +2,7 @@
 ## Title: MultiTool
 ## Notes: Some Quality of Life utilities by The Digital Sorceress
 ## Author: DigitalSorceress
-## Version: 10.0.3.001
+## Version: 10.0.4.001
 ## SavedVariables: MultiToolDB
 ## OptionalDeps: Ace3
 ## X-Embeds: Ace3

@@ -1,6 +1,6 @@
 # MultiTool:ReadMe
-- Version: 10.0.3.000
-- Date: 2026/03/08
+- Version: 10.0.4.001
+- Date: 2026/03/11
 - Author: DigitalSorceress
 
 ## SUMMARY
@@ -141,6 +141,8 @@ I've got a LOT of little things I'd like to do with this addon over time. Some o
   - Whitelist Your Own Guild - Implemented for group Invites v10.0.3.000
   	- White list by guild - Not started
 
+- Quest Log Count slash command - Implemented 10.0.4.000
+ Wife got annoyed the default UI quest log doesn't give a count of quests active - so I added `/mtool qcount`
 
 ## NOTES
 There are probably many things I can't think of at the moment, but this is a good wish-list.

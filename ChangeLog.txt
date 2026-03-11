@@ -1,4 +1,10 @@
-MultiTool:ChangeLog           v10.0.3.001       2026/03/11      DigitalSorceress
+MultiTool:ChangeLog           v10.0.4.001       2026/03/11      DigitalSorceress
+
+v10.0.4.001 - 2026-03-11
+- Added raw `/qcount` slash command (same as /mtool qcount or /multitool qcount)
+
+v10.0.4.000 - 2026-03-11
+- Added slash command `/mtool questcount` to give a quick count of your quest log
 
 v10.0.3.001 - 2026-03-11
 - internal cleanup of toc file - not making this an official release
