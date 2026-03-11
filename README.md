@@ -3,7 +3,7 @@
 - Date: 2026/03/08
 - Author: DigitalSorceress
 
-##SUMMARY
+## SUMMARY
 MultiTool: A set of quality of life tools to help make folks who quest together's lives a bit easier.
 
 ## Rebooting the Addon

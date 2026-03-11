@@ -1,4 +1,8 @@
-MultiTool:ChangeLog           v10.0.3.000       2026/03/08      DigitalSorceress
+MultiTool:ChangeLog           v10.0.3.001       2026/03/11      DigitalSorceress
+
+v10.0.3.001 - 2026-03-11
+- internal cleanup of toc file - not making this an official release
+- its available on the github as an alpha
 
 v10.0.3.000 - 2026-03-08
 - Added new auto accept group invites from own Guild as a global override
