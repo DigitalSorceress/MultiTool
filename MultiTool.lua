@@ -10,12 +10,12 @@ NOTE TO SELF
 /console scriptErrors 1
 
 Author: DigitalSorceress
-Date: 2026/03/11
-Version: 10.0.4.001
+Date: 2026/03/12
+Version: 10.0.4.002
 ]]
 
 -- Some initialization of our happy local vars
-local myVersion = "v10.0.4.001"
+local myVersion = "v10.0.4.002"
 
 local cat = "empty"
 local foo = "empty"
@@ -703,6 +703,22 @@ local defaults = {
 
 
 --
+-- Frames
+--
+-- https://www.reddit.com/r/wowaddondev/comments/1cc2qgj/creating_a_wow_addon_part_2_creating_a_frame/
+
+
+
+
+
+--function InitTrig_Create_TextAreaTemplates takes nothing returns nothing
+--    call BlzLoadTOCFile( "war3mapImported\\Templates.toc" )
+--    call TimerStart(CreateTimer(), 0.0, false, function CreateDefaultTextAreas)
+--endfunction
+
+
+
+--
 -- Field handlers
 --
 
@@ -852,6 +868,17 @@ function MultiTool:ChatCommand(input)
 		-- this was a test and it did not work
 		--C_CombatAudioAlert.SpeakText("MultiTool", 0, true)
 		self:debugMsg("MultiTool: chat command: ".. input, "debug")
+		
+		if (input == "log") then
+--			if logFrame:IsShown() then
+--				logFrame:Hide()
+--			else
+--				logFrame:Show()
+--			end
+			self:CreateDefaultTextAreas()
+		end
+		
+		
 		if (input == "guildInfo") then
 			local shortform = self:IsGuildMemberByName("Kyo")
 			self:debugMsg("shortform:" .. tostring(shortform), "debug")
@@ -866,59 +893,7 @@ function MultiTool:ChatCommand(input)
 		end
 		
 		if (input == "fnord") then
-			
-			self:debugMsg("IsFriend? ", "info")
-			local fname = "charname-server"
-			
-			local numBNetTotal, numBNetOnline, numBNetFavorite, numBNetFavoriteOnline = BNGetNumFriends()
-			self:debugMsg("GetNumFriends(...)")
-			self:debugMsg("  numBNetTotal: " .. tostring(numBNetTotal), "debug")
-			self:debugMsg("  numBNetOnline: " .. tostring(numBNetOnline), "debug")
-			self:debugMsg("  numBNetFavorite: " .. tostring(numBNetFavorite), "debug")
-			self:debugMsg("  numBNetFavoriteOnline: " .. tostring(numBNetFavoriteOnline), "debug")
-
-			--for i = 1, BNGetNumFriends() do
-			for i = 1, 1 do
-				local acct = C_BattleNet.GetFriendAccountInfo(i)
-				self:debugMsg("  bnetAccountID:" .. tostring(acct.bnetAccountID), "debug")
-				self:debugMsg("  accountName:" .. tostring(acct.accountName), "debug")
-				self:debugMsg("  battleTag:" .. tostring(acct.battleTag), "debug")
-				self:debugMsg("  isFriend:" .. tostring(acct.isFriend), "debug")
-				self:debugMsg("  lastOnlineTime:" .. tostring(acct.lastOnlineTime), "debug")
-				self:debugMsg("  isAFK:" .. tostring(acct.isAFK), "debug")
-				self:debugMsg("  isDND:" .. tostring(acct.isDND), "debug")
-				self:debugMsg("  isFavorite:" .. tostring(acct.isFavorite), "debug")
-				self:debugMsg("  appearOffline:" .. tostring(acct.appearOffline), "debug")
-				self:debugMsg("  customMessage:" .. tostring(acct.customMessage), "debug")
-				self:debugMsg("  customMessageTime:" .. tostring(acct.customMessageTime), "debug")
-				self:debugMsg("  rafLinkType:" .. tostring(acct.rafLinkType), "debug")
-				self:debugMsg("  note:" .. tostring(acct.note), "debug")
-
-				local numGameAccts = C_BattleNet.GetFriendNumGameAccounts(i) 
-				self:debugMsg("#### numGameAccts:" .. tostring(numGameAccts), "debug")
-
-				for j = 0, numGameAccts do
-					self:debugMsg("BNetGameAccountInfo ...", "debug")
-					local BNetGameAccountInfo = C_BattleNet.GetFriendGameAccountInfo(i, j)
-					--local BNetGameAccountInfo = BNetAccountInfo.
-					if (BNetGameAccountInfo == nil) then
-						self:debugMsg("BNetGameAccountInfo is nil ...", "debug")
-					else
-						self:debugMsg("  gameAccountID:" .. tostring(BNetGameAccountInfo.gameAccountID), "debug")
-						self:debugMsg("  clientProgram:" .. tostring(BNetGameAccountInfo.clientProgram), "debug")
-						self:debugMsg("  isOnline:" .. tostring(BNetGameAccountInfo.isOnline), "debug")
-						self:debugMsg("  isGameBusy:" .. tostring(BNetGameAccountInfo.isGameBusy), "debug")
-						self:debugMsg("  characterName:" .. tostring(BNetGameAccountInfo.characterName), "debug")
-						self:debugMsg("  isGameAFK:" .. tostring(BNetGameAccountInfo.isGameAFK), "debug")
-						self:debugMsg("  wowProjectID:" .. tostring(BNetGameAccountInfo.wowProjectID), "debug")
-						self:debugMsg("  characterName:" .. tostring(BNetGameAccountInfo.characterName), "debug")
-						self:debugMsg("  realmName:" .. tostring(BNetGameAccountInfo.realmName), "debug")
-						self:debugMsg("  realmDisplayName:" .. tostring(BNetGameAccountInfo.realmDisplayName), "debug")
-						self:debugMsg("  realmID:" .. tostring(BNetGameAccountInfo.realmID), "debug")
-						self:debugMsg("  characterName:" .. tostring(BNetGameAccountInfo.characterName), "debug")
-					end
-				end
-			end
+			self:FnordTest()
 		end
 		
 		if (input == "qcount") then
@@ -977,6 +952,8 @@ function MultiTool:OnInitialize()
 
 	-- Registering the base communications handler
 	self:RegisterComm("MultiTool","OnCommReceived")
+	
+	
 end
 
 

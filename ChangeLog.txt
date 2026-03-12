@@ -1,4 +1,8 @@
-MultiTool:ChangeLog           v10.0.4.001       2026/03/11      DigitalSorceress
+MultiTool:ChangeLog           v10.0.4.002       2026/03/11      DigitalSorceress
+
+v10.0.4.002 - 2026-03-12
+- Noticed a bug in my logic for guild invites - if the accept invites from guild was checked it was always accepting
+- Started adding code for BattleNet friends - ironically that is a much harder nut to crack but is working preliminarily
 
 v10.0.4.001 - 2026-03-11
 - Added raw `/qcount` slash command (same as /mtool qcount or /multitool qcount)

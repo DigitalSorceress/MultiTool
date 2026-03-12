@@ -1,7 +1,18 @@
 # MultiTool:ReadMe
-- Version: 10.0.4.001
-- Date: 2026/03/11
+- Version: 10.0.4.002
+- Date: 2026/03/12
 - Author: DigitalSorceress
+
+## NEWS
+To my embarrassment, I've realized there is a logic issue in the accept guild invite code - where it was just always accepting invites from anyone if that was set
+
+I'm working on it but it will have to wait for day job
+
+## TODO
+Immediate to do list 
+- quick audio disable/enable
+- Logging is getting ugly - make a window
+- dev mode toggle to make my life easier (turns on debug and such)
 
 ## SUMMARY
 MultiTool: A set of quality of life tools to help make folks who quest together's lives a bit easier.
