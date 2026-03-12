@@ -203,6 +203,12 @@ L["PARTY_AUTOACCEPT_DESC"] = "Toggle this to have your toon automatically accept
 L["PARTY_GUILD_LABEL"] = "Accept From My Guild"
 L["PARTY_GUILD_DESC"] = "Override to always auto accept invites from guild mates"
 
+L["PARTY_BNET_LABEL"] = "Accept From BNet Friend"
+L["PARTY_BNET_DESC"] = "Override to always auto accept invites from Battlenet Friends"
+
+L["PARTY_BNET_FAVE_LABEL"] = "Only if Bnet Favorite"
+L["PARTY_BNET_FAVE_DESC"] = "Only apply the Battlenet Accept Override to Battlnenet Favorites"
+
 L["PARTY_GROUP_REJECT_LABEL"] = "Reject Strangers"
 L["PARTY_GROUP_REJECT_DESC"] = "Toggle this to have your toon automatically reject group invites from others NOT on your white list"
 

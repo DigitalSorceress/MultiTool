@@ -142,23 +142,35 @@ local partyOptions = {
 			desc = L["PARTY_GROUP_DESC"],
 			order = 2,
 			args = {
-				groupFlag = {
+				groupBnetFriendAutoAcceptFlag = {
 					type = "toggle",
-					name = L["PARTY_AUTOACCEPT_LABEL"],
-					desc = L["PARTY_AUTOACCEPT_DESC"],
+					name = L["PARTY_BNET_LABEL"],
+					desc = L["PARTY_BNET_DESC"],
 					order = 1
+				},
+				groupBnetFriendFaveAutoAcceptFlag = {
+					type = "toggle",
+					name = L["PARTY_BNET_FAVE_LABEL"],
+					desc = L["PARTY_BNET_FAVE_DESC"],
+					order = 2
 				},
 				groupGuildAutoAcceptFlag = {
 					type = "toggle",
 					name = L["PARTY_GUILD_LABEL"],
 					desc = L["PARTY_GUILD_DESC"],
-					order = 2
+					order = 3
+				},
+				groupFlag = {
+					type = "toggle",
+					name = L["PARTY_AUTOACCEPT_LABEL"],
+					desc = L["PARTY_AUTOACCEPT_DESC"],
+					order = 4
 				},
 				groupRejectFlag = {
 					type = "toggle",
 					name = L["PARTY_GROUP_REJECT_LABEL"],
 					desc = L["PARTY_GROUP_REJECT_DESC"],
-					order = 3
+					order = 5
 				}
 			}
 		},
@@ -674,6 +686,8 @@ local defaults = {
 		whiteList = {GetUnitName("player")},
 		groupFlag = true,
 		groupGuildAutoAcceptFlag = true,
+		groupBnetFriendAutoAcceptFlag = true,
+		groupBnetFriendFaveAutoAcceptFlag = true,
 		groupRejectFlag = false,
 		summonFlag = true,
 		summonWhiteListOnlyFlag = true,
@@ -842,12 +856,86 @@ function MultiTool:ChatCommand(input)
 			local shortform = self:IsGuildMemberByName("Kyo")
 			self:debugMsg("shortform:" .. tostring(shortform), "debug")
 		end
+		
+		if (input == "split") then
+			local foo, bar, baz, qux = strsplit("-", "foo-bar-baz")
+			self:debugMsg("  foo: " ..tostring(foo), "debug")
+			self:debugMsg("  bar: " ..tostring(bar), "debug")
+			self:debugMsg("  baz: " ..tostring(baz), "debug")
+			self:debugMsg("  qux: " ..tostring(qux), "debug")
+		end
+		
+		if (input == "fnord") then
+			
+			self:debugMsg("IsFriend? ", "info")
+			local fname = "charname-server"
+			
+			local numBNetTotal, numBNetOnline, numBNetFavorite, numBNetFavoriteOnline = BNGetNumFriends()
+			self:debugMsg("GetNumFriends(...)")
+			self:debugMsg("  numBNetTotal: " .. tostring(numBNetTotal), "debug")
+			self:debugMsg("  numBNetOnline: " .. tostring(numBNetOnline), "debug")
+			self:debugMsg("  numBNetFavorite: " .. tostring(numBNetFavorite), "debug")
+			self:debugMsg("  numBNetFavoriteOnline: " .. tostring(numBNetFavoriteOnline), "debug")
+
+			--for i = 1, BNGetNumFriends() do
+			for i = 1, 1 do
+				local acct = C_BattleNet.GetFriendAccountInfo(i)
+				self:debugMsg("  bnetAccountID:" .. tostring(acct.bnetAccountID), "debug")
+				self:debugMsg("  accountName:" .. tostring(acct.accountName), "debug")
+				self:debugMsg("  battleTag:" .. tostring(acct.battleTag), "debug")
+				self:debugMsg("  isFriend:" .. tostring(acct.isFriend), "debug")
+				self:debugMsg("  lastOnlineTime:" .. tostring(acct.lastOnlineTime), "debug")
+				self:debugMsg("  isAFK:" .. tostring(acct.isAFK), "debug")
+				self:debugMsg("  isDND:" .. tostring(acct.isDND), "debug")
+				self:debugMsg("  isFavorite:" .. tostring(acct.isFavorite), "debug")
+				self:debugMsg("  appearOffline:" .. tostring(acct.appearOffline), "debug")
+				self:debugMsg("  customMessage:" .. tostring(acct.customMessage), "debug")
+				self:debugMsg("  customMessageTime:" .. tostring(acct.customMessageTime), "debug")
+				self:debugMsg("  rafLinkType:" .. tostring(acct.rafLinkType), "debug")
+				self:debugMsg("  note:" .. tostring(acct.note), "debug")
+
+				local numGameAccts = C_BattleNet.GetFriendNumGameAccounts(i) 
+				self:debugMsg("#### numGameAccts:" .. tostring(numGameAccts), "debug")
+
+				for j = 0, numGameAccts do
+					self:debugMsg("BNetGameAccountInfo ...", "debug")
+					local BNetGameAccountInfo = C_BattleNet.GetFriendGameAccountInfo(i, j)
+					--local BNetGameAccountInfo = BNetAccountInfo.
+					if (BNetGameAccountInfo == nil) then
+						self:debugMsg("BNetGameAccountInfo is nil ...", "debug")
+					else
+						self:debugMsg("  gameAccountID:" .. tostring(BNetGameAccountInfo.gameAccountID), "debug")
+						self:debugMsg("  clientProgram:" .. tostring(BNetGameAccountInfo.clientProgram), "debug")
+						self:debugMsg("  isOnline:" .. tostring(BNetGameAccountInfo.isOnline), "debug")
+						self:debugMsg("  isGameBusy:" .. tostring(BNetGameAccountInfo.isGameBusy), "debug")
+						self:debugMsg("  characterName:" .. tostring(BNetGameAccountInfo.characterName), "debug")
+						self:debugMsg("  isGameAFK:" .. tostring(BNetGameAccountInfo.isGameAFK), "debug")
+						self:debugMsg("  wowProjectID:" .. tostring(BNetGameAccountInfo.wowProjectID), "debug")
+						self:debugMsg("  characterName:" .. tostring(BNetGameAccountInfo.characterName), "debug")
+						self:debugMsg("  realmName:" .. tostring(BNetGameAccountInfo.realmName), "debug")
+						self:debugMsg("  realmDisplayName:" .. tostring(BNetGameAccountInfo.realmDisplayName), "debug")
+						self:debugMsg("  realmID:" .. tostring(BNetGameAccountInfo.realmID), "debug")
+						self:debugMsg("  characterName:" .. tostring(BNetGameAccountInfo.characterName), "debug")
+					end
+				end
+			end
+		end
+		
 		if (input == "qcount") then
 			self:annonceQcount()
+		end
+		
+		if (input == "friend") then
+			local testName = "char-realm"
+			self:debugMsg("TESTING: " ..tostring(testName), "debug")
+
+			local isBNetFriend = self:IsBattleNetFrienByCharName(testName)
+			self:debugMsg("RESULT: " ..tostring(isBNetFriend), "debug")
 		end
 		--LibStub("AceConfigCmd-3.0").HandleCommand(MultiTool, L["SHORT_SLASH_CMD"], "MultiTool", input)
 	end
 end
+
 
 -- ------------------------------------------------
 -- BASIC REQUIRED FUNCTIONS
@@ -1193,6 +1281,7 @@ function MultiTool:confirmPartyInvite(info, sender)
 	self:debugMsg("  isInMyGuild: "..tostring(isInMyGuild), "debug")
 
 
+
 	local actionTaken = false
 
 	if (self.db.profile.groupRejectFlag and not self:isInWhiteList(sender)) then
@@ -1200,10 +1289,29 @@ function MultiTool:confirmPartyInvite(info, sender)
 		-- actively reject and get lost
 		DeclineGroup()
 		actionTaken = true
-	elseif (self.db.profile.groupGuildAutoAcceptFlag) then
+	elseif (self.db.profile.groupGuildAutoAcceptFlag and isInMyGuild) then
 		self:debugMsg("  ACCEPTED: groupGuildAutoAcceptFlag is true (whitelist skipped)", "blather")
 		AcceptGroup()
 		actionTaken = true
+	elseif (self.db.profile.groupBnetFriendAutoAcceptFlag) then
+		local isBattlenetFriend = self:IsBattleNetFrienByCharName(tostring(sender), false)
+		self:debugMsg("  isBattlenetFriend: "..tostring(isBattlenetFriend), "debug")
+		
+		if (isBattlenetFriend) then
+			self:debugMsg("  ACCEPTED: groupBnetFriendAutoAcceptFlag is true (whitelist skipped)", "blather")
+			AcceptGroup()
+			actionTaken = true
+		end
+	elseif (self.db.profile.groupBnetFriendAutoAcceptFlag) then
+		
+		local isBattlenetFave = self:IsBattleNetFrienByCharName(tostring(sender), true)
+		self:debugMsg("  isBattlenetFave: "..tostring(isBattlenetFave), "debug")
+		
+		if (isBattlenetFave) then
+			self:debugMsg("  ACCEPTED: groupBnetFriendAutoAcceptFlag is true, groupBnetFriendAutoAcceptFlag is set and sender is bnet fave (whitelist skipped)", "blather")
+			AcceptGroup()
+			actionTaken = true
+		end
 	elseif (self.db.profile.groupFlag and self:isInWhiteList(sender)) then
 		self:debugMsg("  ACCEPTED: groupFlag is true and sender in white list", "blather")
 		AcceptGroup()
@@ -2534,25 +2642,25 @@ end
 -- Most of the time what you really want is just IsGuildMemberByName("player_name_here")
 function MultiTool:IsGuildMemberByName(playerName, onlineOnly)
 	self:debugMsg("IsGuildMemberByName(playerName, onlineOnly) ...", "debug")
-	self:debugMsg("  playerName: "..tostring(playerName), "debug")
-	self:debugMsg("  onlineOnly: "..tostring(onlineOnly), "debug")
+	self:debugMsg("  playerName: " .. tostring(playerName), "debug")
+	self:debugMsg("  onlineOnly: " .. tostring(onlineOnly), "debug")
 
 	-- first thing - am I in a guild
 	-- if not we just return false
 	local playerIsInGuild = IsInGuild()
 	if (not playerIsInGuild) then
-		self:debugMsg("  Player(self) is not in a guild returning false", "blather")
+		self:debugMsg("  Player(self) is not in a guild returning false", "debug")
 		return false
 	else
-		self:debugMsg("  Player(self) is in aguild returning false", "blather")
+		self:debugMsg("  Player(self) is in aguild returning false", "debug")
 	end
 
 	-- If we get to here we are in a guild
 	-- get my own guild Info
-	self:debugMsg("  Getting number in guild and online...", "blather")
+	self:debugMsg("  Getting number in guild and online...", "debug")
 	local numTotal, numOnline = GetNumGuildMembers()
-	self:debugMsg("    numTotal: "..tostring(numTotal), "blather")
-	self:debugMsg("    numOnline: "..tostring(numOnline), "blather")
+	self:debugMsg("    numTotal: " .. tostring(numTotal), "debug")
+	self:debugMsg("    numOnline: " .. tostring(numOnline), "debug")
 
 	-- decide if we want to include all or just online members
 	-- useful if we're doing an interactive check for something like
@@ -2561,26 +2669,169 @@ function MultiTool:IsGuildMemberByName(playerName, onlineOnly)
 	local maxIndex = 0
 	if (onlineOnly) then
 		maxIndex = numOnline
-		self:debugMsg("    Limited to Online Only: "..tostring(maxIndex), "blather")
+		self:debugMsg("    Limited to Online Only: " .. tostring(maxIndex), "debug")
 	else
 		maxIndex = numTotal
-		self:debugMsg("    Using total guild count: "..tostring(maxIndex), "blather")
+		self:debugMsg("    Using total guild count: " .. tostring(maxIndex), "debug")
 	end
 
 	for index = 1, maxIndex do
 		local name = GetGuildRosterInfo(index)
-		self:debugMsg("  name: "..tostring(name), "blather")
+		self:debugMsg("  name: " .. tostring(name), "blather")
 
-		if (name == playerName) then
+		if (self:ShortNameMatch(playerName, name)) then
 			self:debugMsg("  Match found - target player is in guild - returning true", "debug")
 			return index
 		else
-			self:debugMsg("  No Match... checking next name", "blather")
+			self:debugMsg("  No Match... checking next name", "debug")
 		end
 	end
 	-- ultimate fallthrough if we had an error
 	self:debugMsg("  No Match found.. returning false", "debug")
 	return false
+end
+
+
+-- NOTE This only works if the person is currently online
+function MultiTool:IsBattleNetFrienByCharName(charName, favoritesOnly)
+	self:debugMsg("IsBattleNetFrienByCharName()", "debug")
+	self:debugMsg("  charName:" .. tostring(charName), "debug")
+	self:debugMsg("  favoritesOnly:" .. tostring(favoritesOnly), "debug")
+	
+	-- no time wasting!
+	if (charName == nil) then
+		return false
+	end
+	
+	local numBNetTotal = BNGetNumFriends()
+	self:debugMsg("GetNumFriends(...)", "debug")
+	self:debugMsg("  numBNetTotal: " .. tostring(numBNetTotal), "debug")
+
+	-- we are about to loop through a ton of friends 
+	-- we'll dump the momemnt we get a true
+	for i = 1, numBNetTotal do
+		local acct = C_BattleNet.GetFriendAccountInfo(i)
+		self:debugMsg("  bnetAccountID:" .. tostring(acct.bnetAccountID), "debug")
+		self:debugMsg("  accountName:" .. tostring(acct.accountName), "debug")
+		self:debugMsg("  battleTag:" .. tostring(acct.battleTag), "blather")
+		self:debugMsg("  isFriend:" .. tostring(acct.isFriend), "blather")
+		-- self:debugMsg("  lastOnlineTime:" .. tostring(acct.lastOnlineTime), "blather")
+		-- self:debugMsg("  isAFK:" .. tostring(acct.isAFK), "blather")
+		-- self:debugMsg("  isDND:" .. tostring(acct.isDND), "blather")
+		self:debugMsg("  isFavorite:" .. tostring(acct.isFavorite), "debug")
+		-- self:debugMsg("  appearOffline:" .. tostring(acct.appearOffline), "blather")
+		-- self:debugMsg("  customMessage:" .. tostring(acct.customMessage), "blather")
+		-- self:debugMsg("  customMessageTime:" .. tostring(acct.customMessageTime), "blather")
+		-- self:debugMsg("  rafLinkType:" .. tostring(acct.rafLinkType), "blather")
+		-- self:debugMsg("  note:" .. tostring(acct.note), "blather")
+
+		-- just dump out right here if they are not a favorite and we said faves only
+		if (favoriteOnly and not acct.isFavorite) then
+			self:debugMsg("  favoritesOnly is true; this person is a friend but not a favorite - returning false", "debug")
+			break
+		end
+		
+		-- in order to determine online status we need to dig some
+		-- also a person can have multiple accounts so we need to kind of dig here
+		-- in the end we're looking for matches to return true 
+		
+		local numGameAccts = C_BattleNet.GetFriendNumGameAccounts(i) 
+		self:debugMsg("#### numGameAccts:" .. tostring(numGameAccts), "debug")
+
+		for j = 0, numGameAccts do
+			self:debugMsg("gameAccountInfo ...", "blather")
+			local gameAccountInfo = C_BattleNet.GetFriendGameAccountInfo(i, j)
+			
+			if (gameAccountInfo == nil) then
+				self:debugMsg("gameAccountInfo is nil ... skipping", "debug")
+			else
+				--self:debugMsg("  gameAccountID:" .. tostring(gameAccountInfo.gameAccountID), "blather")
+				--self:debugMsg("  clientProgram:" .. tostring(gameAccountInfo.clientProgram), "blather")
+				--self:debugMsg("  isOnline:" .. tostring(gameAccountInfo.isOnline), "blather")
+				--self:debugMsg("  isGameBusy:" .. tostring(gameAccountInfo.isGameBusy), "blather")
+				self:debugMsg("  characterName:" .. tostring(gameAccountInfo.characterName), "blather")
+				if (gameAccountInfo.characterName == nil) then
+					self:debugMsg("    nil gameAccountInfo.characterName name - skipping", "debug")
+					break
+				end
+				
+				--self:debugMsg("  isGameAFK:" .. tostring(gameAccountInfo.isGameAFK), "blather")
+				--self:debugMsg("  wowProjectID:" .. tostring(gameAccountInfo.wowProjectID), "blather")
+				self:debugMsg("  realmName:" .. tostring(gameAccountInfo.realmName), "blather")
+				--self:debugMsg("  realmDisplayName:" .. tostring(gameAccountInfo.realmDisplayName), "blather")
+				
+				self:debugMsg("Performaing match: "  .. tostring(charName) .. ", " .. tostring(gameAccountInfo.characterName) .. " , " .. tostring(gameAccountInfo.realmName), "debug")
+				if (self:NameMatch(charName, gameAccountInfo.characterName, gameAccountInfo.realmName)) then
+					return true
+				end
+			end
+		end
+	end
+	-- fallthrough - had we matched conditions then we'd have returned true and never reach this
+	return false
+end
+
+function MultiTool:ShortNameMatch(charName1, charName2)
+	self:debugMsg("ShortNameMatch()", "debug")
+	self:debugMsg("  charName1:" .. tostring(charName1), "debug")
+	self:debugMsg("  charName1:" .. tostring(charName1), "debug")
+	
+	-- short circuit
+	if (charName1 == charName2) then
+		return true
+	end
+	
+	local parsedName1 = strsplit("-", tostring(charName1))
+	self:debugMsg("  parsedName1:" .. tostring(parsedName1), "debug")
+	
+	local parsedName2 = strsplit("-", tostring(charName2))
+	self:debugMsg("  parsedName2:" .. tostring(parsedName2), "debug")
+	
+	if(parsedName1 == parsedName2) then
+		return true
+	end
+	
+	-- fallthrough
+	return false
+end
+
+function MultiTool:NameMatch(fullNameToMatch, shortName, realmName, exactMatchOnly)
+	self:debugMsg("NameMatch()", "debug")
+	self:debugMsg("  fullNameToMatch:" .. tostring(fullNameToMatch), "debug")
+	self:debugMsg("  shortName:" .. tostring(shortName), "debug")
+	self:debugMsg("  realmName:" .. tostring(realmName), "debug")
+	self:debugMsg("  exactMatchOnly:" .. tostring(exactMatchOnly), "debug")
+	
+	local nameMatch = false
+	local realmMatch = false
+	
+	local parsedFirstName, parsedRealmName = strsplit("-", tostring(fullNameToMatch))
+	self:debugMsg("  parsedFirstName:" .. tostring(parsedFirstName), "debug")
+	self:debugMsg("  parsedRealmName:" .. tostring(parsedRealmName), "debug")
+
+	if (parsedRealmName and parsedRealmName == realmName) then
+		realmMatch = true
+	end
+
+	if (parsedFirstName == shortName) then
+		nameMatch = true
+	end
+
+	self:debugMsg("  Results:", "debug")
+	self:debugMsg("    nameMatch:" .. tostring(nameMatch), "debug")
+	self:debugMsg("    realmMatch:" .. tostring(realmMatch), "debug")
+
+	-- we always fail on fail to matchname
+	if (not nameMatch) then
+		return false
+	end
+	
+	if (exactMatchOnly and not realmMatch) then
+		return false
+	end
+	
+	-- ultimate fallthrough we passed all conditions so we're good
+	return true
 end
 
 ------------------
