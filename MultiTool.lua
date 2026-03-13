@@ -10,12 +10,19 @@ NOTE TO SELF
 /console scriptErrors 1
 
 Author: DigitalSorceress
-Date: 2026/03/11
-Version: 10.0.4.001
+Date: 2026/03/13
+Version: 10.0.5.000
 ]]
 
 -- Some initialization of our happy local vars
-local myVersion = "v10.0.4.001"
+local myVersion = "v10.0.5.000"
+
+local mt, mtvars = ... 
+-- mt = "MultiTool"
+-- mtvars = {}
+
+
+
 
 local cat = "empty"
 local foo = "empty"
@@ -27,29 +34,15 @@ local totalUsedBagSlots = 0
 local totalFreeQuestLogSlots = 0
 local whiteListDeleteCandidate = 0
 
-local soundList = {
-	[1] =  { name = "none",        path = "" },
-	[2] =  { name = "Raid Warn",   path = "8959" },
-	[3] =  { name = "Oink",        path = "95175" },
-	[4] =  { name = "Murloc",      path = "416" },
-	[5] =  { name = "Baaah",       path = "43942" },
-	[6] =  { name = "Tadpole",     path = "79646" },
-	[7] =  { name = "Smack",       path = "71632" },
-	[8] =  { name = "Murmur",      path = "10821" },
-	[9] =  { name = "Turkey",      path = "15160" },
-	[10] = { name = "Neigh",       path = "157404" },
-	[11] = { name = "Baby",        path = "113517" },
-	[12] = { name = "Bloodlust",   path = "10030" },
-	[13] = { name = "Drum",        path = "53884" },
-	[14] = { name = "Ding Ding",   path = "118491" },
-	[15] = { name = "Boom",        path = "40091" },
-	[16] = { name = "Klank",       path = "63959" },
-	[17] = { name = "Thunk",       path = "972" },
-	[18] = { name = "Ready Check", path = "8960" },
-	[19] = { name = "USE DEFAULT", path = "" },
-}
+
 MultiTool = LibStub("AceAddon-3.0"):NewAddon("MultiTool", "AceConsole-3.0","AceComm-3.0","AceEvent-3.0","AceSerializer-3.0","AceTimer-3.0")
 local L = LibStub("AceLocale-3.0"):GetLocale("MultiTool")
+
+
+self:debugMsg("I am multitool.lua" .. tostring(mt), "Ddebug")
+self:debugMsg("  My vmtvars count is " .. tostring(#mtvars), "Ddebug")
+
+
 
 -- ------------------------------------------------
 -- CONFIGURATION STUFF
@@ -668,20 +661,20 @@ local defaults = {
 		gossipFlag = true,
 		rewardFlag = false,
 		escortFlag = true,
-		escortStartedSound = #soundList,
+		escortStartedSound = #mtvars.soundList,
 		bagFlag = true,
 		bagWhisperFlag = false,
 		bagWarn = 5,
-		bagWarnSound = #soundList,
+		bagWarnSound = #mtvars.soundList,
 		questLogFlag = true,
 		questLogWhisperFlag = false,
 		questLogWarn = 5,
-		questLogWarnSound = #soundList,
+		questLogWarnSound = #mtvars.soundList,
 		vendJunkFlag = false,
 		repairFlag = true,
 		repairGuildFlag = false,
 		repairWhisperFlag = false,
-		repairWarnSound = #soundList,
+		repairWarnSound = #mtvars.soundList,
 		tradeFlag = false,
 		whiteList = {GetUnitName("player")},
 		groupFlag = true,
@@ -691,13 +684,13 @@ local defaults = {
 		groupRejectFlag = false,
 		summonFlag = true,
 		summonWhiteListOnlyFlag = true,
-		summonWarnSound = #soundList,
+		summonWarnSound = #mtvars.soundList,
 		resurrectFlag = true,
 		resurrectWhiteListOnlyFlag = true,
-		resurrectWarnSound = #soundList,
+		resurrectWarnSound = #mtvars.soundList,
 		followWarnFlag = true,
 		followWarnWhiteListOnlyFlag = true,
-		followWarnSound = #soundList,
+		followWarnSound = #mtvars.soundList,
 	}
 }
 
@@ -2857,7 +2850,7 @@ function MultiTool:playSoundByIndex(index)
 	self:debugMsg("playSoundByIndex()", "debug")
 	self:debugMsg("  index:"..tostring(index), "blather")
 	-- check if USE DEFAULT
-	if (index == #soundList) then
+	if (index == #mtvars.soundList) then
 		self:debugMsg("  USE DEFAULT detected, altering choice...", "blather")
 		-- alter the index to the default
 		index = self.db.profile.defaultWarnSound
@@ -2877,14 +2870,14 @@ end
 -- Returns the name of the item defined in soundList given the soundList index
 --
 function MultiTool:getSoundNameByIndex(index)
-  return soundList[index].name
+  return mtvars.soundList[index].name
 end
 
 --
 -- Returns the path of the item defined in soundList given the soundList index
 --
 function MultiTool:getSoundPathByIndex(index)
-  return soundList[index].path
+  return mtvars.soundList[index].path
 end
 
 --
@@ -2899,8 +2892,8 @@ function MultiTool:getSoundSelectTable(skipDefault)
 	self:debugMsg("  skipDefault:"..tostring(skipDefault), "blather")
 
 	local returnTable = {}
-	-- turn the soundList into a flat table
-	for k,v in ipairs(soundList) do
+	-- turn the mtvars.soundList into a flat table
+	for k,v in ipairs(mtvars.soundList) do
 		--[[ -- not used
 		self:debugMsg("adding to returnTable", "debug")
 		self:debugMsg("  key: "..tostring(k), "debug")
