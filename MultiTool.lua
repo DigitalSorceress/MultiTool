@@ -752,7 +752,7 @@ function MultiTool:TableToString(tbl, newlines)
 	
 	if (newlines) then
 		newline = "\n"
-		local indent = "   "
+		indent = "    "
 	end
 
     local result = "{" .. newline
@@ -804,11 +804,11 @@ function MultiTool:ChatCommand(input)
 		if (input == "pad") then
 
 			
-			--local optionsString = self:TableToString(options, true)
+			local optionsString = self:TableToString(options, true)
 			
-			local optionsString = "al;sdkjfilaskdjf sladkjfhlskdjhf sdikjh lskdjhf lksdjhf lksdjh flkjsdh flkjsdhfks fslkdjfh"
+			--local optionsString = "al;sdkjfilaskdjf sladkjfhlskdjhf sdikjh lskdjhf lksdjhf lksdjh flkjsdh flkjsdhfks fslkdjfh"
 			self:Print(optionsString)
-			TinyPad:Insert(optionsString, 1, "MultiTool Log")
+			TinyPad:Insert(optionsString, "MultiTool Log")
 		end
 
 		if (input == "fnord") then
