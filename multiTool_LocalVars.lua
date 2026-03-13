@@ -5,8 +5,8 @@ local mt, mtvars = ...
 -- mt = "MultiTool"
 -- mtvars = {}
 
---self:debugMsg("I am multitool_LocalVars.lua" .. tostring(mt), "Ddebug")
---self:debugMsg("  My vmtvars count is " .. tostring(#mtvars), "Ddebug")
+mtvars.L = LibStub("AceLocale-3.0"):GetLocale("MultiTool")
+
 
 mtvars.soundList = {
 	[1] =  { name = "none",        path = "" },
@@ -28,5 +28,73 @@ mtvars.soundList = {
 	[17] = { name = "Thunk",       path = "972" },
 	[18] = { name = "Ready Check", path = "8960" },
 	[19] = { name = "USE DEFAULT", path = "" },
+}
+
+-- Holds our configuration options
+mtvars.mainOptions = {
+	name = "MultiTool",
+	handler = MultiTool,
+	type = "group",
+	childGroups = "select",
+	get = "getConfigOption",
+	set = "setConfigOption",
+	args = {
+		mainDescription = {
+			type = "description",
+			name = mtvars.L["MAIN_DESCRIPTION"],
+			order = 1
+		},
+		defaultSoundGroupContainer = {
+			type = "group",
+			name = mtvars.L["DEFAULT_SOUND_GROUP_LABEL"],
+			inline = true,
+			order = 2,
+			args = {
+				defaultSoundGroupDesc = {
+					type = "description",
+					name = mtvars.L["DEFAULT_SOUND_GROUP_DESC"],
+					order = 1
+				},
+				defaultWarnSound = {
+					type = "select",
+					name = mtvars.L["PICK_SOUND_LABEL"],
+					desc = mtvars.L["PICK_SOUND_DESC"],
+					order = 2,
+					values = function(info) return MultiTool:getSoundSelectTable(true) end,
+				},
+				defaultWarnSoundTest = {
+					type = "execute",
+					name = mtvars.L["PICK_SOUND_TEST"],
+					func = function(info) MultiTool:soundCheck("defaultWarnSound") end,
+					order = 3,
+				}
+			}
+		},
+		duelGroupContainer = {
+			type = "group",
+			name = mtvars.L["DUEL_GROUP_LABEL"],
+			inline = true,
+			order = 3,
+			args = {
+				duelGroupDesc = {
+					type = "description",
+					name = mtvars.L["DUEL_GROUP_DESC"],
+					order = 1
+				},
+				duelFlag = {
+					type = "toggle",
+					name = mtvars.L["DUEL_LABEL"],
+					desc = mtvars.L["DUEL_DESC"],
+					order = 2
+				},
+				duelAcceptFlag = {
+					type = "toggle",
+					name = mtvars.L["DUEL_ACCEPT_LABEL"],
+					desc = mtvars.L["DUEL_ACCEPT_DESC"],
+					order = 3
+				}
+			}
+		}
+	}
 }
 

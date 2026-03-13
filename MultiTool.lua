@@ -17,11 +17,9 @@ Version: 10.0.5.000
 -- Some initialization of our happy local vars
 local myVersion = "v10.0.5.000"
 
-local mt, mtvars = ... 
+local mt, mtvars = ...
 -- mt = "MultiTool"
 -- mtvars = {}
-
-
 
 
 local cat = "empty"
@@ -38,82 +36,12 @@ local whiteListDeleteCandidate = 0
 MultiTool = LibStub("AceAddon-3.0"):NewAddon("MultiTool", "AceConsole-3.0","AceComm-3.0","AceEvent-3.0","AceSerializer-3.0","AceTimer-3.0")
 local L = LibStub("AceLocale-3.0"):GetLocale("MultiTool")
 
-
-self:debugMsg("I am multitool.lua" .. tostring(mt), "Ddebug")
-self:debugMsg("  My vmtvars count is " .. tostring(#mtvars), "Ddebug")
-
+local options = mtvars.mainOptions
 
 
 -- ------------------------------------------------
 -- CONFIGURATION STUFF
 -- ------------------------------------------------
--- Holds our configuration options
-local options = {
-	name = "MultiTool",
-	handler = MultiTool,
-	type = "group",
-	childGroups = "select",
-	get = "getConfigOption",
-	set = "setConfigOption",
-	args = {
-		mainDescription = {
-			type = "description",
-			name = L["MAIN_DESCRIPTION"],
-			order = 1
-		},
-		defaultSoundGroupContainer = {
-			type = "group",
-			name = L["DEFAULT_SOUND_GROUP_LABEL"],
-			inline = true,
-			order = 2,
-			args = {
-				defaultSoundGroupDesc = {
-					type = "description",
-					name = L["DEFAULT_SOUND_GROUP_DESC"],
-					order = 1
-				},
-				defaultWarnSound = {
-					type = "select",
-					name = L["PICK_SOUND_LABEL"],
-					desc = L["PICK_SOUND_DESC"],
-					order = 2,
-					values = function(info) return MultiTool:getSoundSelectTable(true) end,
-				},
-				defaultWarnSoundTest = {
-					type = "execute",
-					name = L["PICK_SOUND_TEST"],
-					func = function(info) MultiTool:soundCheck("defaultWarnSound") end,
-					order = 3,
-				}
-			}
-		},
-		duelGroupContainer = {
-			type = "group",
-			name = L["DUEL_GROUP_LABEL"],
-			inline = true,
-			order = 3,
-			args = {
-				duelGroupDesc = {
-					type = "description",
-					name = L["DUEL_GROUP_DESC"],
-					order = 1
-				},
-				duelFlag = {
-					type = "toggle",
-					name = L["DUEL_LABEL"],
-					desc = L["DUEL_DESC"],
-					order = 2
-				},
-				duelAcceptFlag = {
-					type = "toggle",
-					name = L["DUEL_ACCEPT_LABEL"],
-					desc = L["DUEL_ACCEPT_DESC"],
-					order = 3
-				}
-			}
-		}
-	}
-}
 
 local partyOptions = {
 	name = L["PARTY_OPTIONS_LABEL"],
@@ -818,7 +746,22 @@ function MultiTool:getWhiteListTable()
 	return self.db.profile.whiteList
 end
 
+function MultiTool:TableToString(tbl, newlines)
+	local newline = ""
+	local indent = ""
+	
+	if (newlines) then
+		newline = "\n"
+		local indent = "   "
+	end
 
+    local result = "{" .. newline
+    for k, v in pairs(tbl) do
+        result = result .. indent .. tostring(k) .. " = " .. tostring(v) .. ", " .. newline
+    end
+    result = result .. "}"
+    return result
+end
 --
 -- Chat Command setup
 --
@@ -857,7 +800,17 @@ function MultiTool:ChatCommand(input)
 			self:debugMsg("  baz: " ..tostring(baz), "debug")
 			self:debugMsg("  qux: " ..tostring(qux), "debug")
 		end
-		
+
+		if (input == "pad") then
+
+			
+			--local optionsString = self:TableToString(options, true)
+			
+			local optionsString = "al;sdkjfilaskdjf sladkjfhlskdjhf sdikjh lskdjhf lksdjhf lksdjh flkjsdh flkjsdhfks fslkdjfh"
+			self:Print(optionsString)
+			TinyPad:Insert(optionsString, 1, "MultiTool Log")
+		end
+
 		if (input == "fnord") then
 			
 			self:debugMsg("IsFriend? ", "info")
@@ -942,6 +895,7 @@ function MultiTool:OnInitialize()
 
 	-- main options table stuff
 	--LibStub("AceConfig-3.0"):RegisterOptionsTable("Main Options", options)
+
 	LibStub("AceConfig-3.0"):RegisterOptionsTable("MultiTool", options)
 	LibStub("AceConfig-3.0"):RegisterOptionsTable("Debug Options", debugOptions)
 	LibStub("AceConfig-3.0"):RegisterOptionsTable("Party Options", partyOptions)
@@ -1026,6 +980,10 @@ function MultiTool:OnEnable()
 	-- self:updateQuestLogSpace()
 
 	self:Print("MultiTool "..myVersion.." ENABLED!")
+
+	self:debugMsg("  My mtvars count is: " .. tostring(self:TableLength(mtvars)), "debug")
+
+
 end
 
 
@@ -1741,10 +1699,11 @@ end -- end of funcction
 --
 function MultiTool:updateQuestLogSpace()
 	-- to be efficient, only bother if we are flagged for it
+	local noComm = false -- fnord not using, not sure why I'm sending
 	if (self.db.profile.questLogFlag) then
-		self:debugMsg("updateQuestLogSpace()", "debug")
-		self:debugMsg("  questLogWarn:"..tostring(self.db.profile.questLogWarn), "debug")
-		self:debugMsg("  questLogWhisperFlag:"..tostring(self.db.profile.questLogWhisperFlag), "debug")
+		self:debugMsg("updateQuestLogSpace()", "blather")
+		self:debugMsg("  questLogWarn:"..tostring(self.db.profile.questLogWarn), "blather")
+		self:debugMsg("  questLogWhisperFlag:"..tostring(self.db.profile.questLogWhisperFlag), "blather")
 
 		-- if they ever up the num of quests available...
 		local constant_questLogSize = 25
@@ -1755,21 +1714,21 @@ function MultiTool:updateQuestLogSpace()
 
 		_,tmp_totalQuestLogEntries = C_QuestLog.GetNumQuestLogEntries()
 		tmp_totalFreeQuestLogSlots = constant_questLogSize - tmp_totalQuestLogEntries
-		self:debugMsg("  tmp_totalQuestLogEntries: "..tostring(tmp_totalQuestLogEntries), "debug")
-		self:debugMsg("  tmp_totalFreeQuestLogSlots: "..tostring(tmp_totalFreeQuestLogSlots), "debug")
+		self:debugMsg("  tmp_totalQuestLogEntries: "..tostring(tmp_totalQuestLogEntries), "blather")
+		self:debugMsg("  tmp_totalFreeQuestLogSlots: "..tostring(tmp_totalFreeQuestLogSlots), "blather")
 
 		-- check to see if this update is gain or loss of free slots
 		if (tmp_totalFreeQuestLogSlots < totalFreeQuestLogSlots) then
-			self:debugMsg("Free quest log slots DOWN... checking agains thresholds", "debug")
+			self:debugMsg("Free quest log slots DOWN... checking agains thresholds", "blather")
 
 			if (tmp_totalFreeQuestLogSlots == 0) then
-				self:debugMsg("  Quest Log FULL ... sendWarning = true", "debug")
+				self:debugMsg("  Quest Log FULL ... sendWarning = true", "blather")
 				sendWarning = true
 			elseif (tmp_totalFreeQuestLogSlots == self.db.profile.questLogWarn) then
-				self:debugMsg("  Threshold met ... sendWarning = true", "debug")
+				self:debugMsg("  Threshold met ... sendWarning = true", "blather")
 				sendWarning = true
 			else
-				self:debugMsg("  Threshold NOT met... sendWarning = false", "debug")
+				self:debugMsg("  Threshold NOT met... sendWarning = false", "blather")
 			end
 		end
 
@@ -1787,7 +1746,7 @@ function MultiTool:updateQuestLogSpace()
 
 			-- Change distribution if we're set to only whisper
 			if (self.db.profile.questLogWhisperFlag) then
-				self:debugMsg("  questLogWhisperFlag is true: Changing distribution to WHISPER", "debug")
+				self:debugMsg("  questLogWhisperFlag is true: Changing distribution to WHISPER", "blather")
 				distribution = "WHISPER"
 			end
 
@@ -1798,7 +1757,7 @@ function MultiTool:updateQuestLogSpace()
 		-- last thing:: Update the addon's copy of the freeSlot levels
 		totalFreeQuestLogSlots = tmp_totalFreeQuestLogSlots
 	else
-		self:debugMsg("questLogFlag is false... updateQuestLogSpace() skipped", "debug")
+		self:debugMsg("questLogFlag is false... updateQuestLogSpace() skipped", "blather")
 	end -- end if questLogFlag
 end -- end of funcction
 
@@ -2826,6 +2785,16 @@ function MultiTool:NameMatch(fullNameToMatch, shortName, realmName, exactMatchOn
 	-- ultimate fallthrough we passed all conditions so we're good
 	return true
 end
+
+---Counts ALL top level entries in table, not just numerical indexes as #t would
+---@param t table
+---@return integer
+function MultiTool:TableLength(t)
+  local count = 0
+  for _ in pairs(t) do count = count + 1 end
+  return count
+end
+
 
 ------------------
 -- Sound handling
