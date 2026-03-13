@@ -49,6 +49,7 @@ NOTE: I deliberately do NOT clone quest reward choices on the grounds that I run
 ## FEATURE ROAD MAP
 I've got a LOT of little things I'd like to do with this addon over time. Some of these may be impractical or not really end up being what I wanted. They are listed here somewhat in the order I want to build them in.
 
+### IMPLEMENTED
 - Warn on losing AutoFollow - Implemented v0.3.05
   This was due to a suggestion from jst-one from www.dual-boxing.com forums
   
@@ -72,9 +73,6 @@ I've got a LOT of little things I'd like to do with this addon over time. Some o
 - Auto Deny duel requests - Implemented v0.1.02
   Maybe MAYBE allow whitelist to request dual - though dueling dualboxers seems a bit Freudian to me
 
-- Inviter - Not Started
-  Attempt to invite all those on your white list with one click
-
 - Taxi Dispatcher - Implemented v0.1.03
   Allows other toons in your group with the addon to automatically take the same taxi node as you
 
@@ -83,9 +81,6 @@ I've got a LOT of little things I'd like to do with this addon over time. Some o
 
 - Bags full warning - Implemented v0.2.00
   Some kind of sound/warning to other members of group with the addon that bag space is low/empty
-
-- LootSetter - Not Started
-  Automatically set party loot to FFA when leader and party consists only of those on your ffa list. When adding members NOt on your list, switch to Group Loot
 
 - Auto Accept Group Invite - Implemented v0.2.04
   Able to auto accept group invites from those on your white list
@@ -96,29 +91,8 @@ I've got a LOT of little things I'd like to do with this addon over time. Some o
 - Auto Repair Announce - Implemented v0.2.07
   When Auto Repair has caused you to spend money, it will announce amount spent to other MultiTool users in your party. Configurable for self-only or broadcast and with sound.
 
-- "Follow Me" - Not Started
-  Any toon in group with the addon can send a "follow me" command and the others will attempt to /follow them... this will probably ONLY work out of combat due to Blizz security
-
-- AutoTrade - SHELVED (AcceptTrade() can not be fired from addon due to WOW restrictions)
-  IF a party member in your group with the addon AND in your white list clicks "accept trade", your toon will auto accept
-
-- Triage - Not Started
-  Auto switch party lead to next in line in your whitelist when current leader dies
-
 - Quest Gossip Share - Implemented v0.1.06
   Allows other toons in your group with the addon to copy your choices on quest dialogs
-
-- Auto Quest Completion - Not Started
-  Quests with simple turn-in-and-done dialogs will autocomplete when NPC dialog is opened
-
-- Quest Progress Announcement - Not Started
-  Announces to others in your party who have the addon when you make progress on a quest(like the old cosmos-based Party Quests) used to do
-
-- Auto Share quests - Not Started
-  when one toon picks up a quest, they will attempt to share with others in the group who have the addon
-
-- Auto accept shared quests - Not Started
-  when a shared quest is offered by another in your group with the addon, you will attempt to accept
 
 - Auto accept escort/event confirm type quests - Implemented v0.2.04
   When someone in your group starts an escort quest, your toon can auto accept instead of having to click yes or miss out
@@ -126,23 +100,101 @@ I've got a LOT of little things I'd like to do with this addon over time. Some o
 - Auto Sell Gray/Junk - Implemented v0.2.00
   When a toon with the addon opens a vendor dialog, it will attempt to auto-sell gray quality items... need a blacklist to stop selling of arbitrary desired items
 
+- Quest Log Count slash command - Implemented 10.0.4.000
+ Wife got annoyed the default UI quest log doesn't give a count of quests active - so I added `/mtool qcount`
+
+### SHELVED
+- AutoTrade - SHELVED (AcceptTrade() can not be fired from addon due to WOW restrictions)
+  IF a party member in your group with the addon AND in your white list clicks "accept trade", your toon will auto accept
+
+- Triage - SHELVED: Not really useful outside multiboxing
+  Auto switch party lead to next in line in your whitelist when current leader dies - ()
+
+- LootSetter - SHELVED - just not sure this is relevant now
+  Automatically set party loot to FFA when leader and party consists only of those on your ffa list. When adding members NOt on your list, switch to Group Loot
+
+### IN PROGRESS
+#### Whitelisting Improvements (varous states of completion)
+- Treat "In my Guild" as whitelist override
+  - See if you can get another Player's Guild from API to use to filter
+- Treat "Is BattleNet Friend" as whitelist override
+  - Treat "Is BattleNet Favorite" as Whitelist Override
+
+### NOT STARTED
+May move this to ToDo
+- Inviter - Not Started
+
+  Attempt to invite all those on your white list with one click
+
+- "Follow Me" - Not Started
+
+  Any toon in group with the addon can send a "follow me" command and the others will attempt to /follow them... this will probably ONLY work out of combat due to Blizz security
+
+- Auto Quest Completion - Not Started
+
+  Quests with simple turn-in-and-done dialogs will autocomplete when NPC dialog is opened
+
+- Quest Progress Announcement - Not Started
+
+  Announces to others in your party who have the addon when you make progress on a quest(like the old cosmos-based Party Quests) used to do
+
+- Auto Share quests - Not Started
+
+  when one toon picks up a quest, they will attempt to share with others in the group who have the addon
+
+- Auto accept shared quests - Not Started
+
+  when a shared quest is offered by another in your group with the addon, you will attempt to accept
+
 - Auto restock reagents - Not Started
+
   When a toon with the addon opens vendor dialog, will scan for desired reagents/items as well as current supply in toon's inventory and buy enough to return to preset supply
 
 - Group Hearth - Not Started
-  Command to cause all in your group with MultiTool (in whitelist when I finally build that) to hearth
 
-- More useful Whitelisting for folks with lots of toons
-  - Whitelist BattlentFriends - Not started
-    - any BN Friend - Not started
-    - whitelist by BN Friend - Not started
-  - Whitelist Friends in general - Not started
-    - any Friend - Not started
-  - Whitelist Your Own Guild - Implemented for group Invites v10.0.3.000
-  	- White list by guild - Not started
+  Command to cause all in your group with MultiTool (in whitelist when I finally build that) to hearth (This may not be possible as it would require the addon to trigger a spell - not sure if allowed)
 
-- Quest Log Count slash command - Implemented 10.0.4.000
- Wife got annoyed the default UI quest log doesn't give a count of quests active - so I added `/mtool qcount`
+- Auto Deposit Warbank Funds
+
+  With the new Warbank, it seems that auto dumping excess funds in might be nice
+
+- Auto Deposit reagents to warband bank
+
+Character banks have auto deposit reagents button by default, but the Warband banks auto button is just auto deposit Warbound items
+
+I want a quick feature to let me deposit reagents in my warband bank
+
+- Pet REminders (Hunter)
+  - Dead Pet reminder
+  - Dismissed Pet Reminder (Only when vehicle auto dismissed if posible)
+  - Warn on Pet Dismissal if not done by Player casting?
+
+When you're a beastmaster hunter your DPS sucks if your pet is dead... it can be so chaotic that its easy to miss till you say "why are my attacks not working / grayed out"
+
+I've seen a few addons that do this - but most of them do way more and are a bit "spammy" for my linking
+
+- BlackList (not sure if needed)
+
+In my old guild sometimes friends would prank me knowing I had my auto accept summons on ... It was in fun so I never worried about it but it may be that someone is an abuser of this so a blacklist might be worthwhile but it's a lot of work so I may see if there's demand
+
+- Dynamic Speed Indicator
+
+  With Dragon Flying and vehicles my normal sanity check macro of "how fast am I moving" doesn't work. It thinks you're still. I like to know. It's especialy nice for dragonflying as you have an optimal glidepath for max speed / min descent rate
+
+- In Combat Indicator
+  I used to use X-Perl, then Z-Perl Unit frames, but changes in 12.x API have really had them struggling. I am TRYING to use the default UI but the one thing that bugs me is it's really nonobvious to me when I'm in combat from looking at my plate - i'd like something more ... visible
+
+- Quest Sharing (via the quest log share quest API)
+  - Auto Share Sharable Quests
+  - AUto Accept Shared Quests
+
+  Whether you're multiboxing (not really a think anymore) or just questing casually with a friend, it would be REALLY nice to just have a quick "share all sharable questst" 
+
+  Likewise I'd like a accept offered quests automaticaly if I can...
+
+
+
+
 
 ## NOTES
 There are probably many things I can't think of at the moment, but this is a good wish-list.
