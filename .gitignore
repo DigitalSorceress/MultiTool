@@ -83,7 +83,8 @@ secring.*
 !.vscode/extensions.json
 *.code-workspace
 
-
+## avoiding vscode from storing wow lua stuff
+settings.json
 
 
 # Warcraft Addon Dev specific
