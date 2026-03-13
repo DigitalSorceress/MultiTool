@@ -50,7 +50,7 @@ function MultiTool:CreateDefaultTextAreas()
 	local scrollChild = CreateFrame("Frame")
 	scrollFrame:SetScrollChild(scrollChild)
 	scrollChild:SetWidth(logFrame:GetWidth()-18)
-	scrollChild:SetHeight(1) 
+	scrollChild:SetHeight(1)
 	
 	---- Add widgets to the scrolling child frame as desired
 	--local title = scrollChild:CreateFontString("ARTWORK", nil, "GameFontNormalLarge")
