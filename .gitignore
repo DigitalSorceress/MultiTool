@@ -83,8 +83,8 @@ secring.*
 !.vscode/extensions.json
 *.code-workspace
 
-
-
+# KEeping vscode settings out
+settings.json
 
 # Warcraft Addon Dev specific
 /*.iml

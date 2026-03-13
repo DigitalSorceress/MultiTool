@@ -76,7 +76,7 @@ local warnedPrefix=false
 -- @param prefix A printable character (\032-\255) classification of the message (typically AddonName or AddonNameEvent)
 -- @param text Data to send, nils (\000) not allowed. Any length.
 -- @param distribution Addon channel, e.g. "RAID", "GUILD", etc; see SendAddonMessage API
--- @param target Destination for some distributions; see SendAddonMessage API
+-- @param target string Destination for some distributions; see SendAddonMessage API
 -- @param prio OPTIONAL: ChatThrottleLib priority, "BULK", "NORMAL" or "ALERT". Defaults to "NORMAL".
 -- @param callbackFn OPTIONAL: callback function to be called as each chunk is sent. receives 3 args: the user supplied arg (see next), the number of bytes sent so far, and the number of bytes total to send.
 -- @param callbackArg: OPTIONAL: first arg to the callback function. nil will be passed if not specified.
