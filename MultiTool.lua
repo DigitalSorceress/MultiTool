@@ -10,16 +10,18 @@ NOTE TO SELF
 /console scriptErrors 1
 
 Author: DigitalSorceress
-Date: 2026/03/12
-Version: 10.0.4.002
+Date: 2026/03/11
+Version: 10.0.4.001
 ]]
 
 -- Some initialization of our happy local vars
-local myVersion = "v10.0.4.002"
+local myVersion = "v10.0.4.001"
 
 local cat = "empty"
 local foo = "empty"
 
+local sb = {}
+local debugMode = "pad"
 
 local totalBagSlots = 0
 local totalFreeBagSlots = 0
@@ -703,22 +705,6 @@ local defaults = {
 
 
 --
--- Frames
---
--- https://www.reddit.com/r/wowaddondev/comments/1cc2qgj/creating_a_wow_addon_part_2_creating_a_frame/
-
-
-
-
-
---function InitTrig_Create_TextAreaTemplates takes nothing returns nothing
---    call BlzLoadTOCFile( "war3mapImported\\Templates.toc" )
---    call TimerStart(CreateTimer(), 0.0, false, function CreateDefaultTextAreas)
---endfunction
-
-
-
---
 -- Field handlers
 --
 
@@ -868,20 +854,22 @@ function MultiTool:ChatCommand(input)
 		-- this was a test and it did not work
 		--C_CombatAudioAlert.SpeakText("MultiTool", 0, true)
 		self:debugMsg("MultiTool: chat command: ".. input, "debug")
-		
-		if (input == "log") then
---			if logFrame:IsShown() then
---				logFrame:Hide()
---			else
---				logFrame:Show()
---			end
-			self:CreateDefaultTextAreas()
-		end
-		
-		
 		if (input == "guildInfo") then
 			local shortform = self:IsGuildMemberByName("Kyo")
 			self:debugMsg("shortform:" .. tostring(shortform), "debug")
+		end
+		
+		if (input == "pad") then
+			self:debugMsg("things", nil)
+			self:debugMsg("stuff", nil)
+			
+			TinyPad:Insert(self:SBFlush(), "MultiTool Log")
+
+		end
+		
+		if (input =="log") then
+			self:debugMsg("LOG window thing", "notice")
+			self:CreateDefaultTextAreas()
 		end
 		
 		if (input == "split") then
@@ -952,8 +940,6 @@ function MultiTool:OnInitialize()
 
 	-- Registering the base communications handler
 	self:RegisterComm("MultiTool","OnCommReceived")
-	
-	
 end
 
 
@@ -1009,13 +995,17 @@ function MultiTool:OnEnable()
 	-- update our quest log count (commented out because it was firing twice)
 	-- self:updateQuestLogSpace()
 
+	if (TinyPad) then
+		debugMode = "pad"
+	end
+
 	self:Print("MultiTool "..myVersion.." ENABLED!")
 end
 
 
 -- Called when the addon is disabled
 function MultiTool:OnDisable()
-	--
+	self:SBFlush(true)
 end
 
 
@@ -2933,26 +2923,83 @@ end
 -- Debugging and console message handling
 --
 function MultiTool:debugMsg(text, level)
+	self:Print("sb.TableLength PRE: " .. self:TableLength(sb))
 	if (level == nil) then
 		return -- do nothing
 	elseif (level == "error") then
 		PlaySound("RauiWarning")
 		UIErrorsFrame:AddMessage(text, 1.0, 0.5, 0.5, 5.0)
+		table.insert(sb, tostring(text))
 	elseif (level == "warn") then
 		PlaySound(self:getSoundPathByIndex(self.db.profile.defaultWarnSound))
 		UIErrorsFrame:AddMessage(text, 1.0, 1.0, 0.5, 5.0)
+		table.insert(sb, tostring(text))
 	elseif (level == "notice") then
 		self:Print(level..": "..text)
+		table.insert(sb, tostring(text))
 	elseif (level == "comm" and (self.db.profile.commFlag or self.db.profile.debugFlag or self.db.profile.blatherFlag)) then
 		self:Print(level..": " ..text)
 	elseif (level == "rpc" and (self.db.profile.commFlag or self.db.profile.debugFlag or self.db.profile.blatherFlag)) then
 		self:Print(level..": " ..text)
 	elseif (level == "debug" and (self.db.profile.debugFlag or self.db.profile.blatherFlag)) then
 		self:Print(level..": "..text)
+		table.insert(sb, tostring(text))
 	elseif (level == "blather" and self.db.profile.blatherFlag) then
 		self:Print(level..": "..text)
+		table.insert(sb, tostring(text))
+	end
+	
+	self:Print("sb.TableLength POST: " .. self:TableLength(sb))
+
+	if (self:TableLength(sb) > 200) then
+		self:Print("debugMode: " .. debugMode)
+		if (debugMode == "pad") then
+			local logstring = self:SBFlush()
+			self:Print(logstring)
+			TinyPad:Insert(logstring, "MultiTool Log")
+		else
+			self:SBFlush(true)
+		end
 	end
 end
+
+function MultiTool:SBFlush(silent)
+	local outString = ""
+	if (silent == nil) then
+		silent = false
+	end
+	
+	self:Print("SBFlush:")
+	self:Print("  Silent: " .. tostring(silent))
+	
+	if (silent) then
+		-- no op
+	else
+		--table.foreach(sb, function( k, v) outString = outString .. v .. "\n" end)
+		for k,v in pairs(sb) do 
+			outString = outString .. k .. ": " .. v .. "\n"
+			self:Print("k:v :" .. k .. ": " .. v)
+		end
+	end
+	
+	for i= 1, self:TableLength(sb)+1 do
+		table.remove(sb)
+	end
+	
+	if (silent) then
+		return ""
+	else
+		return outString
+	end
+end
+
+
+function MultiTool:TableLength(t)
+	local count = 0
+	for _ in pairs(t) do count = count + 1 end
+	return count
+end
+
 
 --
 -- Special debug overriding... 8.0.1.003 or something
@@ -2965,7 +3012,7 @@ function MultiTool:forceDebug(forceFlag, origLevel)
 	end
 end
 
-function MultiTool:dumpTablee(t, indent)
+function MultiTool:dumpTable(t, indent)
 	assert(type(t) == "table", "PrintTable() called for non-table!")
 
 	local indentString = ""
